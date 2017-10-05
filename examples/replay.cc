@@ -1,10 +1,9 @@
 #include "sc2api/sc2_api.h"
-
+#include "sc2utils/sc2_arg_parser.h"
 #include "sc2utils/sc2_manage_process.h"
 
+#include <string>
 #include <iostream>
-
-const char* kReplayFolder = "E:/Replays/";
 
 class Replay : public sc2::ReplayObserver {
 public:
@@ -27,6 +26,7 @@ public:
     }
 
     void OnStep() final {
+        std::cout << "Still here" << std::endl;
     }
 
     void OnGameEnd() final {
@@ -47,17 +47,27 @@ public:
 
 int main(int argc, char* argv[]) {
     sc2::Coordinator coordinator;
+    sc2::ArgParser arg_parser(argv[0]);
+    std::string kReplayFolder;
+
+    arg_parser.AddOptions({
+        {"-R","--replay_path","Path to the replays.", true},
+    });
+    arg_parser.Parse(argc,argv);
+    arg_parser.Get("replay_path", kReplayFolder);
+    
+    std::cout << kReplayFolder << std::endl;
     if (!coordinator.LoadSettings(argc, argv)) {
         return 1;
     }
 
-    if (!coordinator.SetReplayPath(kReplayFolder)) {
+    if (!coordinator.SetReplayPath(kReplayFolder.c_str())) {
         std::cout << "Unable to find replays." << std::endl;
         return 1;
     }
 
     Replay replay_observer;
-
+    replay_observer.SetStepSize(1);
     coordinator.AddReplayObserver(&replay_observer);
 
     while (coordinator.Update());
