@@ -63,6 +63,7 @@ bool ParseSettings(int argc, char* argv[], ProcessSettings& process_settings, Ga
     arg_parser.AddOptions({
         { "-e", "--executable", "The path to StarCraft II.", true },
         { "-s", "--step_size", "How many steps to take per call.", false },
+        { "-R", "--replay_path", "The path to desired SC2 replays with version corresponding to the executable.", true },
         { "-p", "--port", "The port to make StarCraft II listen on.", false },
         { "-r", "--realtime", "Whether to run StarCraft II in  real time or not.", false },
         { "-m", "--map", "Which map to run.", false },

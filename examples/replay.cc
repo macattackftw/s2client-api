@@ -26,7 +26,9 @@ public:
     }
 
     void OnStep() final {
-        std::cout << "Still here" << std::endl;
+        //static int count = 0;
+        //std::cout << "Step: " << ++count << std::endl;
+        //std::cout << "Still here" << std::endl;
     }
 
     void OnGameEnd() final {
@@ -51,6 +53,7 @@ int main(int argc, char* argv[]) {
     std::string kReplayFolder;
 
     arg_parser.AddOptions({
+        {"-e","--executable","Full path to the executable", true},
         {"-R","--replay_path","Path to the replays.", true},
     });
     arg_parser.Parse(argc,argv);
@@ -67,7 +70,7 @@ int main(int argc, char* argv[]) {
     }
 
     Replay replay_observer;
-    replay_observer.SetStepSize(1);
+    coordinator.SetStepSize(100);
     coordinator.AddReplayObserver(&replay_observer);
 
     while (coordinator.Update());
