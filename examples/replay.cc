@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-const char* kReplayFolder = "E:/Replays/";
+const char* kReplayFolder = "/home/kyle/Downloads/StarCraftII/PvZ/";
 
 class Replay : public sc2::ReplayObserver {
 public:
@@ -30,17 +30,17 @@ public:
     }
 
     void OnGameEnd() final {
-        std::cout << "Units created:" << std::endl;
-        const sc2::ObservationInterface* obs = Observation();
-        const sc2::UnitTypes& unit_types = obs->GetUnitTypeData();
-        for (uint32_t i = 0; i < count_units_built_.size(); ++i) {
-            if (count_units_built_[i] == 0) {
-                continue;
-            }
+        // std::cout << "Units created:" << std::endl;
+        // const sc2::ObservationInterface* obs = Observation();
+        // const sc2::UnitTypes& unit_types = obs->GetUnitTypeData();
+        // for (uint32_t i = 0; i < count_units_built_.size(); ++i) {
+        //     if (count_units_built_[i] == 0) {
+        //         continue;
+        //     }
 
-            std::cout << unit_types[i].name << ": " << std::to_string(count_units_built_[i]) << std::endl;
-        }
-        std::cout << "Finished" << std::endl;
+        //     std::cout << unit_types[i].name << ": " << std::to_string(count_units_built_[i]) << std::endl;
+        // }
+        // std::cout << "Finished" << std::endl;
     }
 };
 
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
     }
 
     Replay replay_observer;
-
+    coordinator.SetStepSize(16);
     coordinator.AddReplayObserver(&replay_observer);
 
     while (coordinator.Update());

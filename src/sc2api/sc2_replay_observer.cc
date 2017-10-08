@@ -235,14 +235,44 @@ ReplayControlInterface* ReplayObserver::ReplayControl() {
     return replay_control_imp_;
 }
 
-bool ReplayObserver::IgnoreReplay(const ReplayInfo& replay_info, uint32_t& /*player_id*/) {
-    // Ignore games less than 30 seconds.
-    static const float MinimumReplayDuration = 30.0f;
-    if (replay_info.duration < MinimumReplayDuration) {
-        return true;
+bool ReplayObserver::DesiredReplay(const ReplayInfo& replay_info, int p0_mmr, int p1_mmr, int p0_apm, int p1_apm, 
+                                   int winner, float duration, int r0, int r1) {
+    if (replay_info.players[0].mmr < p0_mmr || replay_info.players[1].mmr < p1_mmr ||
+        replay_info.players[0].apm < p0_apm || replay_info.players[1].apm < p1_apm || replay_info.duration < duration)
+        return false;
+
+    if (r0 != -1)
+        if (replay_info.players[0].race != r0)
+            return false;
+    if (r1 != -1)
+        if (replay_info.players[1].race != r1)
+            return false;
+
+    if (winner != -1)
+    {
+        if (winner == 0 && replay_info.players[0].game_result != GameResult(Win))
+            return false;
+        else if (replay_info.players[1].game_result != GameResult(Win))
+            return false;
+        else
+            // Why would this happen...well, it wouldn't with the replays we currently have/use.
+            return false;
     }
 
-    return false;
+    return true;
+}
+
+bool ReplayObserver::IgnoreReplay(const ReplayInfo& replay_info, uint32_t& /*player_id*/) {
+    static int count = 0;
+    if (replay_info.duration < 0)
+        return true;
+
+    if (DesiredReplay(replay_info, 5050, 5050, 50, 50, -1, 0.0, Race(Protoss), Race(Zerg))) {
+        std::cout << "\nReplay: " << count++ << "\nmmr: " << replay_info.players[0].mmr << " " << replay_info.players[1].mmr << "\nraces: " << replay_info.players[0].race << " " << replay_info.players[1].race << std::endl << std::endl;
+        return false;
+    }
+
+    return true;
 }
 
 void ReplayObserver::SetControl(ControlInterface* control) {

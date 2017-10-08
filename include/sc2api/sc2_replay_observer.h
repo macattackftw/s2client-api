@@ -4,6 +4,7 @@
 #pragma once
 
 #include "sc2_client.h"
+// #include "sc2_gametypes.h"
 
 #include <string>
 
@@ -30,6 +31,8 @@ public:
     virtual bool IgnoreReplay(const ReplayInfo& replay_info, uint32_t& player_id);
 
     void SetControl(ControlInterface* control);
+    bool DesiredReplay(const ReplayInfo& replay_info, int p0_mmr = 0, int p1_mmr = 0, int p0_apm = 10, int p1_apm = 10, 
+                                   int winner = -1, float duration = 0.0f, int r0 = -1, int r1 = -1);
 
 private:
     ReplayControlImp* replay_control_imp_;
