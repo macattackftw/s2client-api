@@ -73,7 +73,7 @@ cd s2client-api
 mkdir build
 cd build
 cmake ../
-make
+make -j8    (or however many cores you want to run it on)
 ```
 
 Working with submodules
