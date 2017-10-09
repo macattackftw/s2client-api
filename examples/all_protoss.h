@@ -96,9 +96,9 @@ public:
                                         std::to_string(forge_count) + "," + std::to_string(nexus_count) + "," + std::to_string(cyber_count) + "," + std::to_string(assim_count) + "," + 
                                         std::to_string(cannon_count) + "\n";
         fout_strings.emplace_back(all_protoss_units);
-        step_num += STEP_SIZE;
-    }   
+    }
 
+    // Inherited methods
 
     void OnGameStart() 
     {
