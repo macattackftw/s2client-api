@@ -27,7 +27,7 @@ public:
     {
         std::string output_path = replay_observer_file_path_.substr(0,replay_observer_file_path_.size() - 10) + "_timed.csv";
         fout.open(output_path.c_str(), std::ofstream::out);
-        fout_strings.emplace_back(headers);
+        fout_strings.push_back(headers);
     }
 
     void CloseFile()
@@ -36,6 +36,7 @@ public:
             fout << x;
         fout.close();
     }
+
 
     // Inherited methods
     

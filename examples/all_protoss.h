@@ -27,7 +27,7 @@ public:
     {
         std::string output_path = replay_observer_file_path_.substr(0,replay_observer_file_path_.size() - 10) + "all_protoss.csv";
         fout.open(output_path.c_str(), std::ofstream::out);
-        fout_strings.emplace_back(headers);
+        fout_strings.push_back(headers);
     }
 
     void CloseFile()
@@ -95,8 +95,9 @@ public:
                                         std::to_string(adept_count) + "," + std::to_string(gateway_count) + "," + std::to_string(warpgate_count) + "," + std::to_string(pylon_count) + "," + 
                                         std::to_string(forge_count) + "," + std::to_string(nexus_count) + "," + std::to_string(cyber_count) + "," + std::to_string(assim_count) + "," + 
                                         std::to_string(cannon_count) + "\n";
-        fout_strings.emplace_back(all_protoss_units);
+        fout_strings.push_back(all_protoss_units);
     }
+
 
     // Inherited methods
 
