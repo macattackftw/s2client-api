@@ -235,45 +235,60 @@ ReplayControlInterface* ReplayObserver::ReplayControl() {
     return replay_control_imp_;
 }
 
-bool ReplayObserver::DesiredReplay(const ReplayInfo& replay_info, int p0_mmr, int p1_mmr, int p0_apm, int p1_apm, 
+bool ReplayObserver::UndesirableReplay(const ReplayInfo& replay_info, int p0_mmr, int p1_mmr, int p0_apm, int p1_apm, 
                                    int winner, float duration, int r0, int r1) {
     if (replay_info.players[0].mmr < p0_mmr || replay_info.players[1].mmr < p1_mmr ||
         replay_info.players[0].apm < p0_apm || replay_info.players[1].apm < p1_apm || replay_info.duration < duration)
-        return false;
+        return true;
 
     if (r0 != -1)
         if (replay_info.players[0].race != r0)
-            return false;
+            return true;
     if (r1 != -1)
         if (replay_info.players[1].race != r1)
-            return false;
+            return true;
 
     if (winner != -1)
     {
         if (winner == 0 && replay_info.players[0].game_result != GameResult(Win))
-            return false;
+            return true;
         else if (replay_info.players[1].game_result != GameResult(Win))
-            return false;
+            return true;
         else
             // Why would this happen...well, it wouldn't with the replays we currently have/use.
-            return false;
+            return true;
     }
 
-    return true;
+    return false;
+}
+
+void ReplayObserver::SetClassData(const ReplayInfo& replay_info)
+{
+    replay_observer_file_path_ = replay_info.replay_path;
+    game_duration_ = replay_info.duration;
+    game_loops_ = replay_info.duration_gameloops;
 }
 
 bool ReplayObserver::IgnoreReplay(const ReplayInfo& replay_info, uint32_t& /*player_id*/) {
-    static int count = 0;
-    if (replay_info.duration < 0)
-        return true;
+    SetClassData(replay_info);
 
-    if (DesiredReplay(replay_info, 5050, 5050, 50, 50, -1, 0.0, Race(Protoss), Race(Zerg))) {
-        std::cout << "\nReplay: " << count++ << "\nmmr: " << replay_info.players[0].mmr << " " << replay_info.players[1].mmr << "\nraces: " << replay_info.players[0].race << " " << replay_info.players[1].race << std::endl << std::endl;
-        return false;
-    }
+    // If we just want a count of viable replays based on our criteria uncomment this section.
+    // TURN THIS INTO AN EXECUTABLE ONCE WE GET THE CONFIG FILE WORKING
 
-    return true;
+    // static int count = 0;   
+    // if (!UndesirableReplay(replay_info, 4000, 4000, 50, 50, -1, 60.0, Race(Protoss), Race(Zerg))) {
+    //     std::cout << count++ << std::endl;
+    // }
+    // return true;
+
+    return UndesirableReplay(replay_info, 4000, 4000, 50, 50, -1, 60.0, Race(Protoss), Race(Zerg));
 }
+
+
+float ReplayObserver::GetGameSecond(const int& step_no){
+    return step_no / (float(game_loops_) / game_duration_);
+}
+
 
 void ReplayObserver::SetControl(ControlInterface* control) {
     replay_control_imp_->control_interface_ = control;

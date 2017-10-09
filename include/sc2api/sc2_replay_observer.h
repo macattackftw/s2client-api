@@ -31,9 +31,15 @@ public:
     virtual bool IgnoreReplay(const ReplayInfo& replay_info, uint32_t& player_id);
 
     void SetControl(ControlInterface* control);
-    bool DesiredReplay(const ReplayInfo& replay_info, int p0_mmr = 0, int p1_mmr = 0, int p0_apm = 10, int p1_apm = 10, 
+    bool UndesirableReplay(const ReplayInfo& replay_info, int p0_mmr = 0, int p1_mmr = 0, int p0_apm = 10, int p1_apm = 10, 
                                    int winner = -1, float duration = 0.0f, int r0 = -1, int r1 = -1);
+    void SetClassData(const ReplayInfo& replay_info);
+    float GetGameSecond(const int& step_no);
 
+    std::string replay_observer_file_path_;
+    float game_duration_ = 0.0f;
+    unsigned int game_loops_ = 0;
+    
 private:
     ReplayControlImp* replay_control_imp_;
 };
