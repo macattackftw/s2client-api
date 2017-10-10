@@ -15,12 +15,14 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    if (!coordinator.SetReplayPath(kReplayFolder)) {
+    // kReplayFolder will be replaced by input from a config file replay_folder.c_str()
+    TimeUnitCreated replay_observer(kReplayFolder);
+
+    if (!coordinator.SetReplayPath(replay_observer.kReplayFolder_)) {
         std::cout << "Unable to find replays." << std::endl;
         return 1;
     }
 
-    TimeUnitCreated replay_observer;
     coordinator.SetStepSize(STEP_SIZE);
     coordinator.AddReplayObserver(&replay_observer);
 
