@@ -226,7 +226,7 @@ bool CoordinatorImp::ShouldIgnore(ReplayObserver* r, const std::string& file) {
         return true;
 
     // Gather replay information with the available observer.
-    r->ReplayControl()->GatherReplayInfo(file, true);
+    r->ReplayControl()->GatherReplayInfo(file, false);
 
     // If the replay isn't being pruned based on replay info start it.
     return r->IgnoreReplay(r->ReplayControl()->GetReplayInfo(), replay_settings_.player_id);

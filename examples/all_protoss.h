@@ -10,7 +10,7 @@
 
 const int STEP_SIZE = 22;
 const int PLAYER_ID = 1;
-
+static int replay_count = 0;
 
 
 class AllProtoss : public sc2::ReplayObserver {
@@ -105,7 +105,10 @@ public:
 
     void OnGameStart() 
     {
+        std::cout << "Replay: " << replay_count++ << std::endl;
+
         step_num = 0;
+        fout_strings.clear();
         OpenFile("Step,Probe,Zealot,Stalker,Adept,Gateway,Warpgate,Pylon,Forge,Nexus,Cybercore,Assimilator,Cannon\n");
     }
 
