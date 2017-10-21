@@ -281,7 +281,7 @@ bool ReplayObserver::IgnoreReplay(const ReplayInfo& replay_info, uint32_t& /*pla
     // }
     // return true;
 
-    return UndesirableReplay(replay_info, 4000, 4000, 50, 50, -1, 60.0, Race(Protoss), Race(Zerg));
+    return UndesirableReplay(replay_info, 4000, 4000, 50, 50, -1, 45.0, Race(Protoss), Race(Zerg));
 }
 
 
