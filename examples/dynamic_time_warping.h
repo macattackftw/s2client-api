@@ -6,6 +6,8 @@
 #define DYNAMIC_TIME_WARPING_H
 
 #include "sc2api/sc2_api.h"
+#include "sc2api/sc2_score.h"
+#include "convex_hull_slow.h"
 
 #include "sc2utils/sc2_manage_process.h"
 
@@ -24,7 +26,7 @@ public:
     std::vector<std::string> fout_strings;
     std::ofstream fout;
     bool halt_data = false;
-    int probes = 0; // initial scout
+    int probes = 0, adepts = 0; // initial scout
     const char* kReplayFolder_;
 
     DynamicTimeWarping(const char* ReplayFolder) :
@@ -73,10 +75,25 @@ public:
 
     void OnStep() 
     {
-        if (!halt_data && step_num < 4000)  // Stop at roughly 177 seconds or first unit death
+
+        // sc2::Units structures = Observation()->GetUnits(sc2::Unit::Self, IsStructure(Observation()));
+
+        if (!halt_data && step_num < 7400)  // Stop at roughly 177 seconds or first unit death
         {
-            std::cout << std::to_string(GetGameSecond(step_num)) << "\tarmy value: " << GetArmyValue() 
-                      << std::endl;
+            const sc2::ObservationInterface* obs = Observation();
+            const sc2::Score& score = obs->GetScore();
+            // sc2::Score score;
+            float min_rate = score.score_details.collection_rate_minerals;
+            float gas_rate = score.score_details.collection_rate_vespene;
+            float upg_min = score.score_details.used_minerals.upgrade;
+            float upg_vesp = score.score_details.used_vespene.upgrade;
+            float struct_val = score.score_details.total_value_structures;
+            sc2::Units units = Observation()->GetUnits();
+            float struct_area = convhull::Area(convhull::ConvexHull(GetStructures(units)));
+
+            std::cout << std::to_string(GetGameSecond(step_num)) << "\tarmy value: " << GetArmyValue(obs, units) 
+                      << "," << min_rate << "," << gas_rate << "," << struct_val << "," << upg_min << "," << upg_vesp 
+                      << ",\t" << struct_area << std::endl;
         }
         step_num += STEP_SIZE;
     }
@@ -88,8 +105,15 @@ public:
             // std::cout << unit->owner << "\t" << unit->unit_type << std::endl;
             if (unit->unit_type == 84)
             {
-                if (probes == 0)
+                if (probes < 7) // Lets ignore worker-line harass
                     ++probes;
+                else
+                    halt_data = true;
+            }
+            else if (unit->unit_type == 311)
+            {
+                if (adepts < 3) // Lets ignore scouts dying
+                    ++adepts;
                 else
                     halt_data = true;
             }
@@ -97,8 +121,10 @@ public:
             {
                 halt_data = true;
             }
-
         }
+
+        if (!halt_data && IsStructure(*unit))
+            std::cout << unit->unit_type << std::endl;
     }    
 
     void OnGameEnd() 
@@ -106,13 +132,12 @@ public:
         // CloseFile();
     }
 
-    unsigned int GetArmyValue()
+    unsigned int GetArmyValue(const sc2::ObservationInterface* obs, sc2::Units units)
     {
         // This may be built into the scoreboard if I can figure that out...
         unsigned int army_value = 0;
-        const sc2::ObservationInterface* obs = Observation();
         const sc2::UnitTypes& unit_types = obs->GetUnitTypeData();
-        sc2::Units units = obs->GetUnits();
+        // sc2::Units units = obs->GetUnits();
         for (auto u : units)
         {
             if (DesiredUnit(u))
@@ -135,6 +160,41 @@ public:
                 && u->unit_type != 343 && u->unit_type != 84
                 && u->unit_type != 60  && u->unit_type != 61  && u->unit_type != 59  && u->unit_type != 72
                 && u->unit_type != 62  && u->unit_type != 67;
+    }
+
+    // I don't trust this filter function
+    struct IsStructure {
+        IsStructure(const sc2::ObservationInterface* obs) : observation_(obs) {};
+
+        bool operator()(const sc2::Unit& unit) {
+            auto& attributes = observation_->GetUnitTypeData().at(unit.unit_type).attributes;
+            bool is_structure = false;
+            for (const auto& attribute : attributes) {
+                if (attribute == sc2::Attribute::Structure) {
+                    is_structure = true;
+                }
+            }
+            return is_structure;
+        }
+
+        const sc2::ObservationInterface* observation_;
+    };
+
+
+    std::vector<const sc2::Unit*> GetStructures(sc2::Units units)
+    {
+        std::vector<const sc2::Unit*> ret_val;
+        ret_val.reserve(units.size());
+        for (const sc2::Unit *u : units)
+            if (IsStructure(*u))
+                ret_val.push_back(u);
+        return ret_val;
+    }
+
+    bool IsStructure(const sc2::Unit &unit)
+    {
+        return (unit.owner == PLAYER_ID && (unit.unit_type == 59 || unit.unit_type == 60 || unit.unit_type == 62 || unit.unit_type == 63 || unit.unit_type == 66 || unit.unit_type == 133));
+
     }
 
 };
