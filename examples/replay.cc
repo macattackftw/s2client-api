@@ -1,7 +1,7 @@
 #include "sc2api/sc2_api.h"
 
 #include "sc2utils/sc2_manage_process.h"
-#include "dynamic_time_warping.h"
+#include "time_unit_created.h"
 
 #include <iostream>
 #include <fstream>
@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     }
 
     // kReplayFolder will be replaced by input from a config file replay_folder.c_str()
-    DynamicTimeWarping replay_observer(kReplayFolder);
+    TimeUnitCreated replay_observer(kReplayFolder);
 
     if (!coordinator.SetReplayPath(replay_observer.kReplayFolder_)) {
         std::cout << "Unable to find replays." << std::endl;
