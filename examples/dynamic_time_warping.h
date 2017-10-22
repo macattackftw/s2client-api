@@ -91,11 +91,11 @@ public:
             float upg_vesp = score.score_details.used_vespene.upgrade;
             float struct_val = score.score_details.total_value_structures;
             sc2::Units units = Observation()->GetUnits();
-            float struct_area = convhull::Area(convhull::ConvexHull(GetStructures(units)));
+            float struct_len = convhull::PerimeterLength(convhull::ConvexHull(GetStructures(units)));
 
             std::cout << std::to_string(GetGameSecond(step_num)) << "\tarmy value: " << GetArmyValue(obs, units) 
                       << "," << min_rate << "," << gas_rate << "," << GetStructuresValue(obs, units) << "," << upg_min << "," << upg_vesp 
-                      << ",\t" << struct_area << std::endl;
+                      << ",\t" << struct_len << std::endl;
         }
         step_num += STEP_SIZE;
     }

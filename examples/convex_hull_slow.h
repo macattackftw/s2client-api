@@ -63,7 +63,6 @@ namespace convhull
 		}while (p != left_most);
 
 		OrderPoints(ret_val);
-		// std::cout << "CV size: " << ret_val.size() << std::endl;
 		return ret_val;
 	}
 
@@ -80,7 +79,23 @@ namespace convhull
 		return std::fabs(ret_val / 2.0f);
 	}
 
+	float Distance(const sc2::Unit &u1, const sc2::Unit &u2)
+	{
+		return std::sqrt((u2.pos.x - u1.pos.x) * (u2.pos.x - u1.pos.x) + (u2.pos.y - u1.pos.y) * (u2.pos.y - u1.pos.y));
+	}
 
+	float PerimeterLength(const std::vector<sc2::Unit> &units)
+	{		
+		int size = units.size() - 2;	// since we go to i + 1 we have to be 2 less than size
+		if (size < 2)
+			return 0.0f;
+
+		float ret_val = 0.0f;
+		for (int i = 0; i < size; ++i)
+			ret_val += Distance(units[i], units[i + 1]);
+		ret_val += Distance(units[size + 1], units[0]);
+		return ret_val;
+	}
 }
 
 #endif
