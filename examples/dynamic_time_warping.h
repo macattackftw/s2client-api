@@ -55,6 +55,8 @@ public:
     {
         std::cout << "Replay: " << replay_count++ << std::endl;
         step_num = 0;
+        probes = 0;
+        adepts = 0;
         halt_data = false;
         // fout_strings.clear();
         // OpenFile("Seconds,Item,Upgrade\n");
@@ -92,7 +94,7 @@ public:
             float struct_area = convhull::Area(convhull::ConvexHull(GetStructures(units)));
 
             std::cout << std::to_string(GetGameSecond(step_num)) << "\tarmy value: " << GetArmyValue(obs, units) 
-                      << "," << min_rate << "," << gas_rate << "," << struct_val << "," << upg_min << "," << upg_vesp 
+                      << "," << min_rate << "," << gas_rate << "," << GetStructuresValue(obs, units) << "," << upg_min << "," << upg_vesp 
                       << ",\t" << struct_area << std::endl;
         }
         step_num += STEP_SIZE;
@@ -107,20 +109,20 @@ public:
             {
                 if (probes < 7) // Lets ignore worker-line harass
                     ++probes;
-                else
-                    halt_data = true;
+                // else
+                    // halt_data = true;
             }
             else if (unit->unit_type == 311)
             {
                 if (adepts < 3) // Lets ignore scouts dying
                     ++adepts;
-                else
-                    halt_data = true;
+                // else
+                    // halt_data = true;
             }
-            else if (DesiredUnit(unit)) // Lets ignore phase shifting for strategizer?
-            {
-                halt_data = true;
-            }
+            // else if (DesiredArmyUnit(unit)) // Lets ignore phase shifting for strategizer?
+            // {
+                // halt_data = true;
+            // }
         }
 
         if (!halt_data && IsStructure(*unit))
@@ -140,7 +142,7 @@ public:
         // sc2::Units units = obs->GetUnits();
         for (auto u : units)
         {
-            if (DesiredUnit(u))
+            if (DesiredArmyUnit(u))
             {
                 army_value += unit_types.at(u->unit_type).mineral_cost;
                 army_value += unit_types.at(u->unit_type).vespene_cost;
@@ -151,10 +153,30 @@ public:
         return army_value;
     }
 
-    bool DesiredUnit(const sc2::Unit*& u)
+   unsigned int GetStructuresValue(const sc2::ObservationInterface* obs, sc2::Units units)
+    {
+        // This may be built into the scoreboard if I can figure that out...
+        unsigned int struct_value = 0;
+        const sc2::UnitTypes& unit_types = obs->GetUnitTypeData();
+        // sc2::Units units = obs->GetUnits();
+        for (const sc2::Unit *u : units)
+        {
+            if (IsStructure(*u))
+            {
+                struct_value += unit_types.at(u->unit_type).mineral_cost;
+                struct_value += unit_types.at(u->unit_type).vespene_cost;
+                // std::cout << std::to_string(u->unit_type) + ",";
+            }
+        }
+        // std::cout << std::endl;
+        return struct_value;
+    }
+
+
+    bool DesiredArmyUnit(const sc2::Unit*& u)
     {
         // Fix this. Utilize enum class UNIT_TYPEID
-        return u->owner == PLAYER_ID && u->unit_type != 801 && u->unit_type != 341 && u->unit_type != 665 && u->unit_type != 666 
+        return u->owner == PLAYER_ID && u->is_alive && u->unit_type != 801 && u->unit_type != 341 && u->unit_type != 665 && u->unit_type != 666 
                 && u->unit_type != 146 && u->unit_type != 147
                 && u->unit_type != 483 && u->unit_type != 342 && u->unit_type != 608
                 && u->unit_type != 343 && u->unit_type != 84
@@ -162,23 +184,25 @@ public:
                 && u->unit_type != 62  && u->unit_type != 67;
     }
 
-    // I don't trust this filter function
-    struct IsStructure {
-        IsStructure(const sc2::ObservationInterface* obs) : observation_(obs) {};
+    // // I don't trust this filter function
+    // struct IsStructure {
+    //     IsStructure(const sc2::ObservationInterface* obs) : observation_(obs) {};
 
-        bool operator()(const sc2::Unit& unit) {
-            auto& attributes = observation_->GetUnitTypeData().at(unit.unit_type).attributes;
-            bool is_structure = false;
-            for (const auto& attribute : attributes) {
-                if (attribute == sc2::Attribute::Structure) {
-                    is_structure = true;
-                }
-            }
-            return is_structure;
-        }
+    //     bool operator()(const sc2::Unit& unit) {
+    //         if ( !unit.is_alive )
+    //             return false;
+    //         auto& attributes = observation_->GetUnitTypeData().at(unit.unit_type).attributes;
+    //         bool is_structure = false;
+    //         for (const auto& attribute : attributes) {
+    //             if (attribute == sc2::Attribute::Structure) {
+    //                 is_structure = true;
+    //             }
+    //         }
+    //         return is_structure;
+    //     }
 
-        const sc2::ObservationInterface* observation_;
-    };
+    //     const sc2::ObservationInterface* observation_;
+    // };
 
 
     std::vector<const sc2::Unit*> GetStructures(sc2::Units units)
@@ -193,7 +217,7 @@ public:
 
     bool IsStructure(const sc2::Unit &unit)
     {
-        return (unit.owner == PLAYER_ID && (unit.unit_type == 59 || unit.unit_type == 60 || unit.unit_type == 62 || unit.unit_type == 63 || unit.unit_type == 66 || unit.unit_type == 133));
+        return (unit.owner == PLAYER_ID && unit.is_alive && (unit.unit_type == 59 || unit.unit_type == 60 || unit.unit_type == 62 || unit.unit_type == 63 || unit.unit_type == 66 || unit.unit_type == 133));
 
     }
 
