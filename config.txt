@@ -1,0 +1,33 @@
+-p0 data
+  player_id:
+  mmr:4000
+  apm:50
+  race:Protoss
+  race_selected:
+  game_result:
+-p1 data
+  player_id:
+  mmr:4000
+  apm:50
+  race:Zerg
+  race_selected:
+  game_result:
+-game data
+  duration: 60.0
+  duration_gameloops:
+  num_players:
+  data_build:
+  base_build:
+  map_name: abysal reef
+  map_path:
+  replay_path:
+  version:
+  data_version:
+-path to executable (absolute path, no extra space at the end!)
+~/Downloads/StarCraftII/Versions/Base55958/SC2_x64
+-path to replay (absolute or relative works now!) 
+~/Downloads/StarCraftII/Replays/PvZ/
+
+************************************************USAGE*************************************************
+to use this file you just need to add the desired information in the format provided by api
+enter the information with no space after the colon, as whitespace can cause compares to fail.
