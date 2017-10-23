@@ -40,7 +40,7 @@ bool ParseFromFile(ProcessSettings& process_settings, GameSettings& game_setting
     const char kDirectoryDivider = '/';
 #endif
     
-bool ParseSettings(int argc, char* argv[], ProcessSettings& process_settings, GameSettings& game_settings) {
+bool ParseSettings(int argc, char* argv[], std::string exec_path, ProcessSettings& process_settings, GameSettings& game_settings) {
     assert(argc);
     ArgParser arg_parser(argv[0]);
 
@@ -81,6 +81,18 @@ bool ParseSettings(int argc, char* argv[], ProcessSettings& process_settings, Ga
     arg_parser.Parse(argc, argv);
 
     arg_parser.Get("executable", process_settings.process_path);
+    std::cout << "PROCESS PATH, YO: \n" << process_settings.process_path << std::endl;
+
+    if (exec_path != "")
+    {
+        if (exec_path[0] == '~')
+        {
+            exec_path = exec_path.substr(1);
+            exec_path = GetUserDirectory() + exec_path;
+        }
+        process_settings.process_path = exec_path;
+    }
+
     if (process_settings.process_path.length() < 2) {
         std::cerr << "Unable to find executable." << std::endl;
         return false;

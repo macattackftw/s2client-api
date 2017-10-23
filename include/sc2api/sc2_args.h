@@ -4,5 +4,5 @@
 
 namespace sc2 {
     bool ParseFromFile(ProcessSettings& process_settings, GameSettings& game_settings, const std::string& file_name);
-    bool ParseSettings(int argc, char * argv[], ProcessSettings& process_settings, GameSettings& game_settings);
+    bool ParseSettings(int argc, char * argv[], std::string exec_path, ProcessSettings& process_settings, GameSettings& game_settings);
 }

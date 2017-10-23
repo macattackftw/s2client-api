@@ -34,7 +34,7 @@ public:
     //! \param argv Provided in main signature.
     //! \param game_settings The name of the settings file.
     //! \return True if settings were found or discovered, false otherwise.
-    bool LoadSettings(int argc, char** argv);
+    bool LoadSettings(int argc, char** argv, std::string exec_path = "");
 
     //! Specifies whether bots or replays OnStep function should be run in parallel. If set to true make sure your bots are thread-safe
     //! if they reach into shared code.

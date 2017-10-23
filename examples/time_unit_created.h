@@ -19,11 +19,9 @@ public:
     int step_num = 0;
     std::vector<std::string> fout_strings;
     std::ofstream fout;
-    const char* kReplayFolder_;
 
-    TimeUnitCreated(const char* ReplayFolder) :
+    TimeUnitCreated() :
         sc2::ReplayObserver() {
-        kReplayFolder_ = ReplayFolder;
     }
 
     void OpenFile(std::string headers)

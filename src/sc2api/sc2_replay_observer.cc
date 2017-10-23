@@ -2,6 +2,7 @@
 #include "sc2api/sc2_control_interfaces.h"
 #include "sc2api/sc2_proto_to_pods.h"
 #include "sc2api/sc2_game_settings.h"
+#include "sc2api/config.h"
 
 #include <iostream>
 
@@ -235,22 +236,22 @@ ReplayControlInterface* ReplayObserver::ReplayControl() {
     return replay_control_imp_;
 }
 
-bool ReplayObserver::UndesirableReplay(const ReplayInfo& replay_info, int p0_mmr, int p1_mmr, int p0_apm, int p1_apm, 
-                                   int winner, float duration, int r0, int r1) {
-    if (replay_info.players[0].mmr < p0_mmr || replay_info.players[1].mmr < p1_mmr ||
-        replay_info.players[0].apm < p0_apm || replay_info.players[1].apm < p1_apm || replay_info.duration < duration)
+bool ReplayObserver::UndesirableReplay(const ReplayInfo& replay_info) {
+    Config config_filter(replay_config_file);
+    if (replay_info.players[0].mmr < config_filter.filter.p0_mmr || replay_info.players[1].mmr < config_filter.filter.p1_mmr ||
+        replay_info.players[0].apm < config_filter.filter.p0_apm || replay_info.players[1].apm < config_filter.filter.p1_apm || replay_info.duration < config_filter.filter.duration)
         return true;
 
-    if (r0 != -1)
-        if (replay_info.players[0].race != r0)
+    if (config_filter.filter.p0_race != -1)
+        if (replay_info.players[0].race != config_filter.filter.p0_race)
             return true;
-    if (r1 != -1)
-        if (replay_info.players[1].race != r1)
+    if (config_filter.filter.p1_race != -1)
+        if (replay_info.players[1].race != config_filter.filter.p1_race)
             return true;
 
-    if (winner != -1)
+    if (config_filter.filter.winner != -1)
     {
-        if (winner == 0 && replay_info.players[0].game_result != GameResult(Win))
+        if (config_filter.filter.winner == 0 && replay_info.players[0].game_result != GameResult(Win))
             return true;
         else if (replay_info.players[1].game_result != GameResult(Win))
             return true;
@@ -281,7 +282,7 @@ bool ReplayObserver::IgnoreReplay(const ReplayInfo& replay_info, uint32_t& /*pla
     // }
     // return true;
 
-    return UndesirableReplay(replay_info, 4000, 4000, 50, 50, -1, 45.0, Race(Protoss), Race(Zerg));
+    return UndesirableReplay(replay_info);//, 4000, 4000, 50, 50, -1, 45.0, Race(Protoss), Race(Zerg));
 }
 
 

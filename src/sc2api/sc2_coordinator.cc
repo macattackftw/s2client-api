@@ -634,8 +634,8 @@ void Coordinator::SetReplayRecovery(bool value) {
 }
 
 
-bool Coordinator::LoadSettings(int argc, char** argv) {
-    return ParseSettings(argc, argv, imp_->process_settings_, imp_->game_settings_);
+bool Coordinator::LoadSettings(int argc, char** argv, std::string exec_path) {
+    return ParseSettings(argc, argv, exec_path, imp_->process_settings_, imp_->game_settings_);
 }
 
 void Coordinator::LaunchStarcraft() {
