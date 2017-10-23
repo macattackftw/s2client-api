@@ -8,11 +8,8 @@
 #include <fstream>
 #include <string>
 
-// const char* kReplayFolder = "/home/kyle/Downloads/StarCraftII/Replays/PvZ/";
-
-
 int main(int argc, char* argv[]) {
-    Config bot_config(replay_config_file);  // ../../../../Downloads/StarCraftII/Replays/PvZ/
+    Config bot_config(replay_config_file);
 
     sc2::Coordinator coordinator;
     if (!coordinator.LoadSettings(argc, argv, bot_config.exe_path)) {

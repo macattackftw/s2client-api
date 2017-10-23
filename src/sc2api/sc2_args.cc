@@ -81,8 +81,6 @@ bool ParseSettings(int argc, char* argv[], std::string exec_path, ProcessSetting
     arg_parser.Parse(argc, argv);
 
     arg_parser.Get("executable", process_settings.process_path);
-    std::cout << "PROCESS PATH, YO: \n" << process_settings.process_path << std::endl;
-
     if (exec_path != "")
     {
         if (exec_path[0] == '~')

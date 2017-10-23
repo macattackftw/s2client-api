@@ -207,10 +207,7 @@ struct ConfigReplayFilter
                 replay_path += "/"; // This guy...realpath() takes it off
             }
             else if (replay_path[0] == '~')
-            {
                 replay_path = sc2::GetUserDirectory() + replay_path.substr(1);
-            }
-            std::cout << "REPLAY PATH: " << replay_path << std::endl;
             #endif
         }
     };
