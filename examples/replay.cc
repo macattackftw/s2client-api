@@ -30,7 +30,4 @@ int main(int argc, char* argv[]) {
     while (coordinator.Update());
     std::cout <<"Completed replay count! Press any key to exit...\n" << std::endl;
 
-    while (!sc2::PollKeyPress());
-
-
 }
