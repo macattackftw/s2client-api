@@ -8,7 +8,7 @@
 
 using namespace std;
 
-const std::string replay_config_file = "../../config.txt";
+const std::string replay_config_file = "config.txt";
 //namespace sc2{
 //***TODO***remove the structs and enums and use the sc2 namespace instead
 enum Race {
@@ -198,7 +198,7 @@ struct ConfigReplayFilter
             }
             fin.close();
             
-            #ifndef _WIN32
+            #ifndef __WIN32__
             if (replay_path[0] == '.')
             {
                 char resolved_path[PATH_MAX]; 

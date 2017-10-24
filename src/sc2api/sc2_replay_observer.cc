@@ -273,16 +273,11 @@ void ReplayObserver::SetClassData(const ReplayInfo& replay_info)
 bool ReplayObserver::IgnoreReplay(const ReplayInfo& replay_info, uint32_t& /*player_id*/) {
     SetClassData(replay_info);
 
-    // If we just want a count of viable replays based on our criteria uncomment this section.
-    // TURN THIS INTO AN EXECUTABLE ONCE WE GET THE CONFIG FILE WORKING
-
-    // static int count = 0;   
-    // if (!UndesirableReplay(replay_info, 4000, 4000, 50, 50, -1, 60.0, Race(Protoss), Race(Zerg))) {
-    //     std::cout << count++ << std::endl;
-    // }
-    // return true;
-
-    return UndesirableReplay(replay_info);//, 4000, 4000, 50, 50, -1, 45.0, Race(Protoss), Race(Zerg));
+    static int count = 0;   
+    if (!UndesirableReplay(replay_info)) {
+        std::cout << count++ << std::endl;
+    }
+    return true;
 }
 
 
