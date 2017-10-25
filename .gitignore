@@ -53,4 +53,4 @@ project/include
 project/lib
 
 .DS_Store
-project/config.txt
+config.txt
