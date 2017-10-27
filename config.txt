@@ -1,13 +1,13 @@
 -p0 data
   player_id:
-  mmr:4000
+  mmr:4750
   apm:50
   race:Protoss
   race_selected:
   game_result:
 -p1 data
   player_id:
-  mmr:4000
+  mmr:4750
   apm:50
   race:Zerg
   race_selected:

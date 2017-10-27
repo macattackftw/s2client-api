@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <vector>
+
+// http://www.geeksforgeeks.org/convex-hull-set-1-jarviss-algorithm-or-wrapping/
 namespace convhull
 {
 
@@ -65,6 +67,7 @@ namespace convhull
 		OrderPoints(ret_val);
 		return ret_val;
 	}
+
 
 	float Area(const std::vector<sc2::Unit> &units)
 	{

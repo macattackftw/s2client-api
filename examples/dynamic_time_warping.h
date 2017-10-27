@@ -8,6 +8,7 @@ Gather data necessary for multidemensional dynamic time warping (DTW).
 #include "sc2api/sc2_api.h"
 #include "sc2api/sc2_score.h"
 #include "convex_hull_slow.h"
+#include "unit_centroid.h"
 
 #include "sc2utils/sc2_manage_process.h"
 
@@ -27,11 +28,9 @@ public:
 	std::ofstream fout;
 	bool halt_data = false;
 	int probes = 0, adepts = 0; // initial scout
-	const char* kReplayFolder_;
 
-	DynamicTimeWarping(const char* ReplayFolder) :
+	DynamicTimeWarping() :
 		sc2::ReplayObserver() {
-		kReplayFolder_ = ReplayFolder;
 	}
 
 	void OpenFile(std::string headers)
@@ -91,11 +90,15 @@ public:
 			float upg_vesp = score.score_details.used_vespene.upgrade;
 			float struct_val = score.score_details.total_value_structures;
 			sc2::Units units = Observation()->GetUnits();
+			sc2::Units army = GetArmyUnits(units);
+			sc2::Units bases = GetBases(units);
+			float army_val = GetArmyValue(obs, army);
 			float struct_area = convhull::Area(convhull::ConvexHull(GetStructures(units)));
+			float army_dist = army_val == 0 ? 0.0f :GetDistance(GetUnitCentroid(units), GetUnitCentroid(army));
 
-			std::cout << std::to_string(GetGameSecond(step_num)) << "\tarmy value: " << GetArmyValue(obs, units)
+			std::cout << std::to_string(GetGameSecond(step_num)) << "\tarmy value: " << army_val
 				<< "," << min_rate << "," << gas_rate << "," << GetStructuresValue(obs, units) << "," << upg_min << "," << upg_vesp
-				<< ",\t" << struct_area << std::endl;
+				<< ",\t" << struct_area << "," << army_dist << std::endl;
 		}
 		step_num += STEP_SIZE;
 	}
@@ -134,38 +137,58 @@ public:
 		// CloseFile();
 	}
 
-	unsigned int GetArmyValue(const sc2::ObservationInterface* obs, sc2::Units units)
+	float GetDistance(const sc2::Point2D &p1, const sc2::Point2D &p2)
+	{
+		return sqrt((p2.x - p1.x)*(p2.x - p1.x) + (p2.y - p1.y)*(p2.y - p1.y));
+	}
+
+
+	sc2::Units GetBases(const sc2::Units &units)
+	{
+		sc2::Units ret_val;
+		for (auto u : units)
+		{
+			if (u->unit_type == 59)	// Nexus
+				ret_val.push_back(u);
+		}
+		return ret_val;
+	}
+
+	sc2::Units GetArmyUnits(const sc2::Units &units)
+	{
+		sc2::Units ret_val;
+		for (auto u : units)
+		{
+			if (DesiredArmyUnit(u))
+				ret_val.push_back(u);
+		}
+		return ret_val;
+	}
+
+	unsigned int GetArmyValue(const sc2::ObservationInterface* obs, const sc2::Units &units)
 	{
 		// This may be built into the scoreboard if I can figure that out...
 		unsigned int army_value = 0;
 		const sc2::UnitTypes& unit_types = obs->GetUnitTypeData();
-		// sc2::Units units = obs->GetUnits();
 		for (auto u : units)
 		{
-			if (DesiredArmyUnit(u))
-			{
-				army_value += unit_types.at(u->unit_type).mineral_cost;
-				army_value += unit_types.at(u->unit_type).vespene_cost;
-				// std::cout << std::to_string(u->unit_type) + ",";
-			}
+			army_value += unit_types.at(u->unit_type).mineral_cost;
+			army_value += unit_types.at(u->unit_type).vespene_cost;
 		}
-		// std::cout << std::endl;
 		return army_value;
 	}
 
-	unsigned int GetStructuresValue(const sc2::ObservationInterface* obs, sc2::Units units)
+	unsigned int GetStructuresValue(const sc2::ObservationInterface* obs, const sc2::Units &units)
 	{
 		// This may be built into the scoreboard if I can figure that out...
 		unsigned int struct_value = 0;
 		const sc2::UnitTypes& unit_types = obs->GetUnitTypeData();
-		// sc2::Units units = obs->GetUnits();
-		for (const sc2::Unit *u : units)
+		for (auto u : units)
 		{
 			if (IsStructure(*u))
 			{
 				struct_value += unit_types.at(u->unit_type).mineral_cost;
 				struct_value += unit_types.at(u->unit_type).vespene_cost;
-				// std::cout << std::to_string(u->unit_type) + ",";
 			}
 		}
 		// std::cout << std::endl;
@@ -205,7 +228,7 @@ public:
 	// };
 
 
-	std::vector<const sc2::Unit*> GetStructures(sc2::Units units)
+	std::vector<const sc2::Unit*> GetStructures(const sc2::Units &units)
 	{
 		std::vector<const sc2::Unit*> ret_val;
 		ret_val.reserve(units.size());
