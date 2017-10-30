@@ -35,16 +35,16 @@ public:
 
 	void OpenFile(std::string headers)
 	{
-		// std::string output_path = replay_observer_file_path_.substr(0,replay_observer_file_path_.size() - 10) + "_dtw.csv";
-		// fout.open(output_path.c_str(), std::ofstream::out);
-		// fout_strings.push_back(headers);
+		std::string output_path = replay_observer_file_path_.substr(0,replay_observer_file_path_.size() - 10) + "_dtw.csv";
+		fout.open(output_path.c_str(), std::ofstream::out);
+		fout_strings.push_back(headers);
 	}
 
 	void CloseFile()
 	{
-		// for (std::string x : fout_strings)
-		// fout << x;
-		// fout.close();
+		for (std::string x : fout_strings)
+			fout << x;
+		fout.close();
 	}
 
 
@@ -57,8 +57,8 @@ public:
 		probes = 0;
 		adepts = 0;
 		halt_data = false;
-		// fout_strings.clear();
-		// OpenFile("Seconds,Item,Upgrade\n");
+		fout_strings.clear();
+		OpenFile("Seconds,ArmyVal,MinRate,GasRate,StructVal,UpgMin,UpgGas,StructPerim,ArmyDist\n");
 	}
 
 	void OnUnitCreated(const sc2::Unit* unit)
@@ -96,45 +96,54 @@ public:
 			float struct_area = convhull::Area(convhull::ConvexHull(GetStructures(units)));
 			float army_dist = army_val == 0 ? 0.0f :GetDistance(GetUnitCentroid(units), GetUnitCentroid(army));
 
-			std::cout << std::to_string(GetGameSecond(step_num)) << "\tarmy value: " << army_val
-				<< "," << min_rate << "," << gas_rate << "," << GetStructuresValue(obs, units) << "," << upg_min << "," << upg_vesp
-				<< ",\t" << struct_area << "," << army_dist << std::endl;
+			fout_strings.emplace_back(std::to_string(GetGameSecond(step_num)) + "," + 
+									  std::to_string(army_val) + "," + 
+									  std::to_string(min_rate) + "," + 
+									  std::to_string(gas_rate) + "," + 
+									  std::to_string(GetStructuresValue(obs, units)) + "," + 
+									  std::to_string(upg_min) + "," + 
+									  std::to_string(upg_vesp) + "," + 
+									  std::to_string(struct_area) + "," + 
+									  std::to_string(army_dist) + "\n");
+			// std::cout << std::to_string(GetGameSecond(step_num)) << "\tarmy value: " << army_val
+			// 	<< "," << min_rate << "," << gas_rate << "," << GetStructuresValue(obs, units) << "," << upg_min << "," << upg_vesp
+			// 	<< ",\t" << struct_area << "," << army_dist << std::endl;
 		}
 		step_num += STEP_SIZE;
 	}
 
 	void OnUnitDestroyed(const sc2::Unit* unit)
 	{
-		if (!halt_data && unit->owner == PLAYER_ID)   // Units are "created" when seen, so it "creates" minerals, neutral map mobs, etc.
-		{
-			// std::cout << unit->owner << "\t" << unit->unit_type << std::endl;
-			if (unit->unit_type == 84)
-			{
-				if (probes < 7) // Lets ignore worker-line harass
-					++probes;
-				// else
-				// halt_data = true;
-			}
-			else if (unit->unit_type == 311)
-			{
-				if (adepts < 3) // Lets ignore scouts dying
-					++adepts;
-				// else
-				// halt_data = true;
-			}
-			// else if (DesiredArmyUnit(unit)) // Lets ignore phase shifting for strategizer?
-			// {
-			// halt_data = true;
-			// }
-		}
+		// if (!halt_data && unit->owner == PLAYER_ID)   // Units are "created" when seen, so it "creates" minerals, neutral map mobs, etc.
+		// {
+		// 	// std::cout << unit->owner << "\t" << unit->unit_type << std::endl;
+		// 	if (unit->unit_type == 84)
+		// 	{
+		// 		if (probes < 7) // Lets ignore worker-line harass
+		// 			++probes;
+		// 		// else
+		// 		// halt_data = true;
+		// 	}
+		// 	else if (unit->unit_type == 311)
+		// 	{
+		// 		if (adepts < 3) // Lets ignore scouts dying
+		// 			++adepts;
+		// 		// else
+		// 		// halt_data = true;
+		// 	}
+		// 	// else if (DesiredArmyUnit(unit)) // Lets ignore phase shifting for strategizer?
+		// 	// {
+		// 	// halt_data = true;
+		// 	// }
+		// }
 
-		if (!halt_data && IsStructure(*unit))
-			std::cout << unit->unit_type << std::endl;
+		// if (!halt_data && IsStructure(*unit))
+		// 	std::cout << unit->unit_type << std::endl;
 	}
 
 	void OnGameEnd()
 	{
-		// CloseFile();
+		CloseFile();
 	}
 
 	float GetDistance(const sc2::Point2D &p1, const sc2::Point2D &p2)
