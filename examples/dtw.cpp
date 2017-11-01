@@ -3,6 +3,7 @@
 #include <iostream>
 #include <limits>
 #include <algorithm>
+#include "md_dtw.h"
 
 using namespace std;
 
