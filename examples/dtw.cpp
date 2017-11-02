@@ -51,6 +51,9 @@ int main(int argc, char** argv)
 
         }
 
+        MultiDimensionalTimeWarping md_dtw(cheese);
+        cout << md_dtw.GetCheese() << endl;
+
     for (string file : csv_files)
     {
         vector<string> lines = GetLines(folder_name + file);
