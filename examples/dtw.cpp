@@ -65,7 +65,9 @@ int main(int argc, char** argv)
         // cheese.reserve(cols);
 
         for (auto v : columns)
+        {
             v.reserve(n);
+        }
 
         for (auto line : lines)
         {
