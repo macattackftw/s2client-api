@@ -20,17 +20,22 @@ using namespace std;
 class MultiDimensionalTimeWarping {
   public:
 
-    MultiDimensionalTimeWarping(vector<vector<float> > &input_time_series) :
-        num_features_(input_time_series.size()), num_steps_(input_time_series[0].size()), time_series_(input_time_series) {
+    MultiDimensionalTimeWarping(vector<vector<float> > &input_time_series, const vector<vector<float> > &b_line) :
+        num_features_(input_time_series.size()), num_steps_(input_time_series[0].size()), time_series_(input_time_series)  {
         means_.reserve(num_features_);
         std_.reserve(num_features_);
+		cout << "features: " << num_features_ << endl;
+
         FillMeanAndStd();
         ApplyZeroMean();
-        // FindDist() will use a vector<vector<float>> from a .h file, it is constant        
-        all_in_ = FindDist(input_time_series);
-        cheese_ = FindDist(input_time_series);
-        economic_ = FindDist(input_time_series);
-        timing_ = FindDist(input_time_series);
+        // FindDist() will use a vector<vector<float>> from a .h file, it is constant 
+        vector<vector<float> > cheese;
+        cheese = input_time_series; 
+        baseline = b_line;
+        // all_in_ = FindDist(input_time_series);
+        cheese_ = FindDist(baseline);
+        // economic_ = FindDist(input_time_series);
+        // timing_ = FindDist(input_time_series);
     }
 
 
@@ -74,6 +79,8 @@ class MultiDimensionalTimeWarping {
             std /= vec.size();
             std_.emplace_back(sqrt(std));
         }
+        cout << "fillmean complete" << endl;
+
     }
 
 
@@ -85,6 +92,8 @@ class MultiDimensionalTimeWarping {
                 (*vec)[j] = ((*vec)[j] - means_[i]) / std_[i];
             }
         }
+		cout << "ApplyZeroMean complete" << endl;
+
     }
 
 
@@ -114,6 +123,17 @@ class MultiDimensionalTimeWarping {
                 matrix[i][j] = GetTaxicabNorm(baseline, i, j) + min(min(matrix[i - 1][j - 1], matrix[i][j - 1]), matrix[i - 1][j]);
             }
         }
+
+        for (auto vec : matrix)
+        {
+        	for (auto f : vec)
+        	{
+        		cout << f << " ";
+        	}
+        	cout << endl;
+        }
+
+
         return WalkMatrix(matrix);
     }
 
@@ -126,6 +146,7 @@ class MultiDimensionalTimeWarping {
         // For each feature in the time series calculate the taxicab norm between it and the relevant baseline
         // Ignore first entry as that is the time interval which is constant between series
         for (unsigned int i = 1; i < num_features_; ++i) {
+        	cout << "ts: " << time_series_[t_indx][i] << "\tbs: " << baseline[b_indx][i] << endl;
             ret_val += fabs(time_series_[t_indx][i] - baseline[b_indx][i]);
         }
         return ret_val;
@@ -171,6 +192,7 @@ class MultiDimensionalTimeWarping {
     vector<float> std_;
     const unsigned int num_features_;
     const unsigned int num_steps_;
+    vector<vector<float> > baseline;
 
     float all_in_ = numeric_limits<float>::infinity();
     float cheese_ = numeric_limits<float>::infinity();
