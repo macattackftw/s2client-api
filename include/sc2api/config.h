@@ -8,7 +8,7 @@
 
 using namespace std;
 
-const string replay_config_file = "/home/kyle/IntergalacticLifelineI/s2client-api/config.txt";
+const string replay_config_file = "../../config.txt";
 //namespace sc2{
 //***TODO***remove the structs and enums and use the sc2 namespace instead
 enum Race {
