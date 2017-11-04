@@ -28,5 +28,5 @@ int main(int argc, char* argv[]) {
     coordinator.AddReplayObserver(&replay_observer);
 
     while (coordinator.Update());
-    while (!sc2::PollKeyPress());
+    // while (!sc2::PollKeyPress());
 }

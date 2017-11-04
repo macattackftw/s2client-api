@@ -275,11 +275,7 @@ void ReplayObserver::SetClassData(const ReplayInfo& replay_info)
 bool ReplayObserver::IgnoreReplay(const ReplayInfo& replay_info, uint32_t& /*player_id*/) {
     SetClassData(replay_info);
 
-    static int count = 0;   
-    if (!UndesirableReplay(replay_info)) {
-        std::cout << count++ << std::endl;
-    }
-    return true;
+    return UndesirableReplay(replay_info);
 }
 
 
