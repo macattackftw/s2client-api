@@ -239,7 +239,8 @@ ReplayControlInterface* ReplayObserver::ReplayControl() {
 bool ReplayObserver::UndesirableReplay(const ReplayInfo& replay_info) {
     Config config_filter(replay_config_file);
     if (replay_info.players[0].mmr < config_filter.filter.p0_mmr || replay_info.players[1].mmr < config_filter.filter.p1_mmr ||
-        replay_info.players[0].apm < config_filter.filter.p0_apm || replay_info.players[1].apm < config_filter.filter.p1_apm || replay_info.duration < config_filter.filter.duration)
+        replay_info.players[0].apm < config_filter.filter.p0_apm || replay_info.players[1].apm < config_filter.filter.p1_apm || 
+        replay_info.duration < config_filter.filter.min_duration || replay_info.duration > config_filter.filter.max_duration)
         return true;
 
     if (config_filter.filter.p0_race != -1)
@@ -251,10 +252,11 @@ bool ReplayObserver::UndesirableReplay(const ReplayInfo& replay_info) {
 
     if (config_filter.filter.winner != -1)
     {
-        if (config_filter.filter.winner == 0 && replay_info.players[0].game_result != GameResult(Win))
-            return true;
-        else if (replay_info.players[1].game_result != GameResult(Win))
-            return true;
+        // If we want a winner, return false (this is not an undesirable replay)
+        if (config_filter.filter.winner == 0 && replay_info.players[0].game_result == GameResult(Win))
+            return false;
+        else if (config_filter.filter.winner == 1 && replay_info.players[1].game_result == GameResult(Win))
+            return false;
         else
             // Why would this happen...well, it wouldn't with the replays we currently have/use.
             return true;
