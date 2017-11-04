@@ -8,7 +8,7 @@
 
 using namespace std;
 
-const std::string replay_config_file = "../../config.txt";
+const std::string replay_config_file = "config.txt";
 //namespace sc2{
 //***TODO***remove the structs and enums and use the sc2 namespace instead
 enum Race {
@@ -68,7 +68,8 @@ struct ConfigReplayFilter
         winner = -1, 
         p0_race = -1, 
         p1_race = -1;
-    float duration = 0.0f;
+    float min_duration = 0.0f;
+    float max_duration = numeric_limits<float>::max();
 };
 
     class Config
@@ -123,8 +124,12 @@ struct ConfigReplayFilter
                             break;
                         case 7:
                             if(line_s.size()>0)
+                            {
                                 // Can't use this because we need an "I don't care" option. TODO
                                 rp_filter.players[0].game_result = line_s == "Win" ? GameResult(Win) : GameResult(Loss);    // Not used
+                                if (rp_filter.players[0].game_result == GameResult(Win))
+                                    filter.winner = 0;
+                            }
                             break;
                         case 9:
                             if(line_s.size()>0)
@@ -149,47 +154,56 @@ struct ConfigReplayFilter
                             break;
                         case 14:
                             if(line_s.size()>0)
+                            {
                                 rp_filter.players[1].game_result = line_s == "Win" ? GameResult(Win) : GameResult(Loss);    // Not used
+                                if (rp_filter.players[1].game_result == GameResult(Win))
+                                    filter.winner = 1;
+                            }
                             break;
                         case 16:
                             if(line_s.size()>0)
-                                filter.duration = stof(line_s);
+                                filter.min_duration = stof(line_s);
                             break;
                         case 17:
                             if(line_s.size()>0)
-                                rp_filter.duration_gameloops = (unsigned int)(stoi(line_s));
+                                filter.max_duration = stof(line_s);
                             break;
+                            
                         case 18:
                             if(line_s.size()>0)
-                                rp_filter.num_players = stoi(line_s);
+                                rp_filter.duration_gameloops = (unsigned int)(stoi(line_s));
                             break;
                         case 19:
                             if(line_s.size()>0)
-                                rp_filter.data_build = stoi(line_s);
+                                rp_filter.num_players = stoi(line_s);
                             break;
                         case 20:
                             if(line_s.size()>0)
-                                rp_filter.base_build = stoi(line_s);
+                                rp_filter.data_build = stoi(line_s);
                             break;
                         case 21:
-                            rp_filter.map_name = line_s;
+                            if(line_s.size()>0)
+                                rp_filter.base_build = stoi(line_s);
                             break;
                         case 22:
-                            rp_filter.map_path = line_s;
+                            rp_filter.map_name = line_s;
                             break;
                         case 23:
-                            rp_filter.replay_path = line_s;
+                            rp_filter.map_path = line_s;
                             break;
                         case 24:
-                            rp_filter.version = line_s;
+                            rp_filter.replay_path = line_s;
                             break;
                         case 25:
+                            rp_filter.version = line_s;
+                            break;
+                        case 26:
                             rp_filter.data_version = line_s;
                             break;
-                        case 27:
+                        case 28:
                             exe_path = line_s;
                             break;
-                        case 29:
+                        case 30:
                             replay_path = line_s;
                             break;
                     
@@ -198,7 +212,7 @@ struct ConfigReplayFilter
             }
             fin.close();
             
-            #ifndef _WIN32
+            #ifndef __WIN32__
             if (replay_path[0] == '.')
             {
                 char resolved_path[PATH_MAX]; 
