@@ -1,4 +1,5 @@
 #This module takes a csv file and finds strategy percentages based on wieghted inputs, this will be used as the score for the neural net
+import numpy as np
 import sys, csv
 
 #this function takes a game state of 5 variables and based on the wieghts gives the likelyhood of the 4 main strats
@@ -37,32 +38,41 @@ def classify(bases, gas, army, struct, time):
         economy = economy + (economy)/err_t*(cheese/100)
         cheese = 0.0
     return cheese, timing, all_in, economy
-	    
 
-# get filename as command-line argument
-filename = sys.argv[1]
-
-# open CSV file (automatically closed at end of with stmt)
-with open( filename ) as fin:
-    reader = csv.reader( fin )  # read the file with the csv reader
-    data = list( reader )       # convert the csv reader object (a generator) to a list (of lists)
-    data.pop(0)
-    count = 0;
-# take the csv and run every entry
-for i in data:
-    ch, tm, ai, ec = classify(float(i[0]), float(i[1]), float(i[2]), float(i[4]), float(i[5]))
-    ch = str(round(ch,2))
-    tm = str(round(tm,2))
-    ai = str(round(ai,2))
-    ec = str(round(ec,2))
-    count+=1
-#updating the percentages based
-    if(count%60 == 0):
-        print(i[0] + " bases\n" + i[1] + " gas income% \n" + i[2] + " army value\n"
-            + i[4] +   " structure value\n" + i[5] + " seconds\n")
-        print(ch + "% cheese\n" + tm + "% timing\n" + ai + "% all in\n" + ec + "% economic\n")
+def get_input(filename, time):
+    In_arr = np.random.random((4, 5))
+    with open( filename ) as fin:
+        reader = csv.reader( fin )  # read the file with the csv reader
+        data = list( reader )       # convert the csv reader object (a generator) to a list (of 
+        data.pop(0)
 
 
+    for i in range(0,4):
+        for j in range(0,5):
+            In_arr[i][j]=float(data[time+i][j])
+    return In_arr
+
+    
+def get_output(filename, time):
+    # open CSV file (automatically closed at end of with stmt)
+    with open( filename ) as fin:
+        reader = csv.reader( fin )  # read the file with the csv reader
+        data = list( reader )       # convert the csv reader object (a generator) to a list (of lists)
+        data.pop(0)
+
+        ch, tm, ai, ec = classify(float(data[time+1][0]), float(data[time+1][1]), float(data[time+1][2]), float(data[time+1][4]), float(data[time+1][5]))
+        ch = float(round(ch,2))
+        tm = float(round(tm,2))
+        ai = float(round(ai,2))
+        ec = float(round(ec,2))
+
+
+        #print(i[0] + " bases\n" + i[1] + " gas income% \n" + i[2] + " army value\n"
+        #    + i[4] +   " structure value\n" + i[5] + " seconds\n")
+        #print(ch + "% cheese\n" + tm + "% timing\n" + ai + "% all in\n" + ec + "% economic\n")
+
+    Out_arr = np.array([[ch],[tm],[ai],[ec]])
+    return Out_arr
 
 
 
