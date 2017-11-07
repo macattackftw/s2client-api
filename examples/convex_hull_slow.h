@@ -7,21 +7,6 @@
 // http://www.geeksforgeeks.org/convex-hull-set-1-jarviss-algorithm-or-wrapping/
 namespace convhull
 {
-
-	// Not even remotely efficient, that's ok
-    struct {
-        bool operator()(sc2::Unit a, sc2::Unit b) const
-        {   
-            return atan2(a.pos.y,a.pos.x) < atan2(b.pos.y,b.pos.x);	// assumes origin start 0,0
-        }   
-    } customLess;
-
-	void OrderPoints(std::vector<sc2::Unit> &units)
-	{
-		sort(units.begin(), units.end(), customLess);
-	}
-
-
 	bool OnSegment(const sc2::Unit &p, const sc2::Unit &q, const sc2::Unit &r)
 	{
 		return q.pos.x <= std::max(p.pos.x, r.pos.x) && q.pos.x >= std::min(p.pos.x, r.pos.x) &&
@@ -64,7 +49,6 @@ namespace convhull
 			p = q;
 		}while (p != left_most);
 
-		OrderPoints(ret_val);
 		return ret_val;
 	}
 

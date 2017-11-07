@@ -78,8 +78,8 @@ public:
 	{
 
 		// sc2::Units structures = Observation()->GetUnits(sc2::Unit::Self, IsStructure(Observation()));
-		if (0)
-		// if (!halt_data && step_num < 7400)  // Stop at roughly 177 seconds or first unit death
+		// if (0)
+		if (!halt_data && step_num < 7400)  // Stop at roughly 177 seconds or first unit death
 		{
 			const sc2::ObservationInterface* obs = Observation();
 			const sc2::Score& score = obs->GetScore();
@@ -96,7 +96,16 @@ public:
 			float struct_area = convhull::Area(convhull::ConvexHull(GetStructures(units)));
 			float army_dist = army_val == 0 ? 0.0f :GetDistance(GetUnitCentroid(units), GetUnitCentroid(army));
 
-			fout_strings.emplace_back(std::to_string(GetGameSecond(step_num)) + "," + 
+			// fout_strings.emplace_back(std::to_string(GetGameSecond(step_num)) + "," + 
+			// 						  std::to_string(army_val) + "," + 
+			// 						  std::to_string(min_rate) + "," + 
+			// 						  std::to_string(gas_rate) + "," + 
+			// 						  std::to_string(GetStructuresValue(obs, units)) + "," + 
+			// 						  std::to_string(upg_min) + "," + 
+			// 						  std::to_string(upg_vesp) + "," + 
+			// 						  std::to_string(struct_area) + "," + 
+			// 						  std::to_string(army_dist) + "\n");
+			std::string output = (std::to_string(GetGameSecond(step_num)) + "," + 
 									  std::to_string(army_val) + "," + 
 									  std::to_string(min_rate) + "," + 
 									  std::to_string(gas_rate) + "," + 
@@ -105,6 +114,7 @@ public:
 									  std::to_string(upg_vesp) + "," + 
 									  std::to_string(struct_area) + "," + 
 									  std::to_string(army_dist) + "\n");
+			std::cout << output;
 			// std::cout << std::to_string(GetGameSecond(step_num)) << "\tarmy value: " << army_val
 			// 	<< "," << min_rate << "," << gas_rate << "," << GetStructuresValue(obs, units) << "," << upg_min << "," << upg_vesp
 			// 	<< ",\t" << struct_area << "," << army_dist << std::endl;
