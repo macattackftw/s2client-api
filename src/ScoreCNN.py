@@ -40,16 +40,16 @@ def classify(bases, gas, army, struct, time):
     return cheese, timing, all_in, economy
 
 def get_input(filename, time):
-    In_arr = np.random.random((4, 5))
+    In_arr = np.random.random((1, 5))
     with open( filename ) as fin:
         reader = csv.reader( fin )  # read the file with the csv reader
         data = list( reader )       # convert the csv reader object (a generator) to a list (of 
         data.pop(0)
 
 
-    for i in range(0,4):
         for j in range(0,5):
-            In_arr[i][j]=float(data[time+i][j])
+            In_arr[0][j]=float(data[time][j])
+        In_arr[0][3]=float(data[time][5])
     return In_arr
 
     
