@@ -57,8 +57,8 @@ public:
 		probes = 0;
 		adepts = 0;
 		halt_data = false;
-		fout_strings.clear();
-		OpenFile("Seconds,ArmyVal,MinRate,GasRate,StructVal,UpgMin,UpgGas,StructPerim,ArmyDist\n");
+		// fout_strings.clear();
+		// OpenFile("Seconds,ArmyVal,MinRate,GasRate,StructVal,UpgMin,UpgGas,StructPerim,ArmyDist\n");
 	}
 
 	void OnUnitCreated(const sc2::Unit* unit)
@@ -78,8 +78,8 @@ public:
 	{
 
 		// sc2::Units structures = Observation()->GetUnits(sc2::Unit::Self, IsStructure(Observation()));
-
-		if (!halt_data && step_num < 7400)  // Stop at roughly 177 seconds or first unit death
+		if (0)
+		// if (!halt_data && step_num < 7400)  // Stop at roughly 177 seconds or first unit death
 		{
 			const sc2::ObservationInterface* obs = Observation();
 			const sc2::Score& score = obs->GetScore();
@@ -143,7 +143,7 @@ public:
 
 	void OnGameEnd()
 	{
-		CloseFile();
+		// CloseFile();
 	}
 
 	float GetDistance(const sc2::Point2D &p1, const sc2::Point2D &p2)
