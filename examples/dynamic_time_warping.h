@@ -28,6 +28,7 @@ public:
 	std::ofstream fout;
 	bool halt_data = false;
 	int probes = 0, adepts = 0; // initial scout
+	bool file_write_flag = false;
 
 	DynamicTimeWarping() :
 		sc2::ReplayObserver() {
@@ -57,8 +58,11 @@ public:
 		probes = 0;
 		adepts = 0;
 		halt_data = false;
-		// fout_strings.clear();
-		// OpenFile("Seconds,ArmyVal,MinRate,GasRate,StructVal,UpgMin,UpgGas,StructPerim,ArmyDist\n");
+		if (file_write_flag)
+		{
+			fout_strings.clear();
+			OpenFile("Seconds,ArmyVal,MinRate,GasRate,StructVal,UpgMin,UpgGas,StructPerim,ArmyDist\n");
+		}
 	}
 
 	void OnUnitCreated(const sc2::Unit* unit)
@@ -96,28 +100,31 @@ public:
 			float struct_area = convhull::Area(convhull::ConvexHull(GetStructures(units)));
 			float army_dist = army_val == 0 ? 0.0f :GetDistance(GetUnitCentroid(units), GetUnitCentroid(army));
 
-			// fout_strings.emplace_back(std::to_string(GetGameSecond(step_num)) + "," + 
-			// 						  std::to_string(army_val) + "," + 
-			// 						  std::to_string(min_rate) + "," + 
-			// 						  std::to_string(gas_rate) + "," + 
-			// 						  std::to_string(GetStructuresValue(obs, units)) + "," + 
-			// 						  std::to_string(upg_min) + "," + 
-			// 						  std::to_string(upg_vesp) + "," + 
-			// 						  std::to_string(struct_area) + "," + 
-			// 						  std::to_string(army_dist) + "\n");
-			std::string output = (std::to_string(GetGameSecond(step_num)) + "," + 
-									  std::to_string(army_val) + "," + 
-									  std::to_string(min_rate) + "," + 
-									  std::to_string(gas_rate) + "," + 
-									  std::to_string(GetStructuresValue(obs, units)) + "," + 
-									  std::to_string(upg_min) + "," + 
-									  std::to_string(upg_vesp) + "," + 
-									  std::to_string(struct_area) + "," + 
-									  std::to_string(army_dist) + "\n");
-			std::cout << output;
-			// std::cout << std::to_string(GetGameSecond(step_num)) << "\tarmy value: " << army_val
-			// 	<< "," << min_rate << "," << gas_rate << "," << GetStructuresValue(obs, units) << "," << upg_min << "," << upg_vesp
-			// 	<< ",\t" << struct_area << "," << army_dist << std::endl;
+			if (file_write_flag)
+			{
+				fout_strings.emplace_back(std::to_string(GetGameSecond(step_num)) + "," + 
+										  std::to_string(army_val) + "," + 
+										  std::to_string(min_rate) + "," + 
+										  std::to_string(gas_rate) + "," + 
+										  std::to_string(GetStructuresValue(obs, units)) + "," + 
+										  std::to_string(upg_min) + "," + 
+										  std::to_string(upg_vesp) + "," + 
+										  std::to_string(struct_area) + "," + 
+										  std::to_string(army_dist) + "\n");
+			}
+			else
+			{
+				std::string output = (std::to_string(GetGameSecond(step_num)) + "," + 
+										  std::to_string(army_val) + "," + 
+										  std::to_string(min_rate) + "," + 
+										  std::to_string(gas_rate) + "," + 
+										  std::to_string(GetStructuresValue(obs, units)) + "," + 
+										  std::to_string(upg_min) + "," + 
+										  std::to_string(upg_vesp) + "," + 
+										  std::to_string(struct_area) + "," + 
+										  std::to_string(army_dist) + "\n");
+				std::cout << output;
+			}
 		}
 		step_num += STEP_SIZE;
 	}
@@ -152,8 +159,9 @@ public:
 	}
 
 	void OnGameEnd()
-	{
-		// CloseFile();
+	{	
+		if (file_write_flag)
+			CloseFile();
 	}
 
 	float GetDistance(const sc2::Point2D &p1, const sc2::Point2D &p2)
