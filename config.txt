@@ -1,25 +1,25 @@
 -p0 data
   player_id:
-  mmr:5400
+  mmr:5100
   apm:50
   race:Protoss
   race_selected:
   game_result:Win
 -p1 data
   player_id:
-  mmr:5400
+  mmr:5100
   apm:50
   race:Zerg
   race_selected:
   game_result:
 -game data
-  min duration:300.0
-  max duration:600.0
+  min duration:800
+  max duration:
   duration_gameloops:
   num_players:
   data_build:
   base_build:
-  map_name: abysal reef
+  map_name:
   map_path:
   replay_path:
   version:
