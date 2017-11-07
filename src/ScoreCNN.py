@@ -46,7 +46,7 @@ def get_input(filename, time):
         data = list( reader )       # convert the csv reader object (a generator) to a list (of 
         data.pop(0)
 
-
+        #outputs the values at entered time
         for j in range(0,5):
             In_arr[0][j]=float(data[time][j])
         In_arr[0][3]=float(data[time][5])

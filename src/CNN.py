@@ -2,7 +2,8 @@ import ScoreCNN
 import numpy as np
 import sys, csv
 
-#a sigmoid function to find probability
+
+#a sigmoid function to find probabilitys
 def nonlin(x, deriv=False):
     if(deriv==True):
         return x*(1-x)
