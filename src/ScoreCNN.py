@@ -47,9 +47,20 @@ def get_input(filename, time):
         data.pop(0)
 
 
-        for j in range(0,5):
-            In_arr[0][j]=float(data[time][j])
-        In_arr[0][3]=float(data[time][5])
+        if(int(data[time][0]) == 1):
+            In_arr[0][0]=1
+            In_arr[0][1]=0
+            In_arr[0][2]=0
+        if(int(data[time][0]) == 2):
+            In_arr[0][0]=0
+            In_arr[0][1]=1
+            In_arr[0][2]=0
+        if(int(data[time][0]) > 2):
+            In_arr[0][0]=0
+            In_arr[0][1]=0
+            In_arr[0][2]=1
+        In_arr[0][3]=float(data[time][2])
+        In_arr[0][4]=float(data[time][3])
     return In_arr
 
     
