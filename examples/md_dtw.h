@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iomanip>
+#include <algorithm>
 
 using namespace std;
 
@@ -21,9 +22,10 @@ using namespace std;
 class MultiDimensionalTimeWarping {
   public:
 
-    MultiDimensionalTimeWarping(vector<vector<float> > input_time_series, vector<vector<float> > b_line) :
+    MultiDimensionalTimeWarping(vector<vector<float> > input_time_series, vector<vector<float> > all_in, 
+                                vector<vector<float> > cheese, vector<vector<float> > economic, vector<vector<float> > timing) :
         num_features_(input_time_series.size()), num_steps_(input_time_series[0].size()),
-        time_series_(input_time_series), baseline_(b_line) {
+        time_series_(input_time_series), all_in_(all_in), cheese_(cheese), economic_(economic), timing_(timing) {
 
         // cout << "BSIZE: " << b_line.size() << endl;
         // baseline_ = b_line;
@@ -52,12 +54,23 @@ class MultiDimensionalTimeWarping {
         // cheese = input_time_series;
         // baseline_ = b_line;
 
-        FillMeanAndStd(baseline_);
+        FillMeanAndStd(all_in_);
+        ApplyZeroMean(all_in_);
+        all_in_dist_ = FindDist(all_in_);
 
-        ApplyZeroMean(baseline_);
+        FillMeanAndStd(cheese_);
+        ApplyZeroMean(cheese_);
+        cheese_dist_ = FindDist(cheese_);
 
+        FillMeanAndStd(economic_);
+        ApplyZeroMean(economic_);
+        economic_dist_ = FindDist(economic_);
+
+        FillMeanAndStd(timing_);
+        ApplyZeroMean(timing_);
+        timing_dist_ = FindDist(timing_);
         // all_in_ = FindDist(input_time_series);
-        cheese_ = FindDist(baseline_);
+        
         // economic_ = FindDist(input_time_series);
         // timing_ = FindDist(input_time_series);
 
@@ -66,16 +79,49 @@ class MultiDimensionalTimeWarping {
 
 
     float GetAllIn() {
-        return all_in_;
+        return all_in_dist_;
     }
     float GetCheese() {
-        return cheese_;
+        return cheese_dist_;
     }
     float GetEconomic() {
-        return economic_;
+        return economic_dist_;
     }
     float GetTiming() {
-        return timing_;
+        return timing_dist_;
+    }
+
+    string MostLikely()
+    {
+        float distances[] = {all_in_dist_, cheese_dist_, economic_dist_, timing_dist_};
+        unsigned int smallest = 0;
+
+        float smallest_val = all_in_dist_;
+
+        for (unsigned int i = 1; i < 4; ++i)
+        {
+            if (distances[i] < smallest_val)
+            {
+                smallest = i;
+                smallest_val = distances[i];
+            }
+        }
+
+        switch(smallest)
+        {
+            case 0:
+                return "All_In";
+            break;
+            case 1:
+                return "Cheese";
+            break;
+            case 2:
+                return "Economic";
+            break;
+            case 3:
+                return "Timing";
+            break;
+        }
     }
 
 
@@ -190,19 +236,20 @@ class MultiDimensionalTimeWarping {
         for (unsigned int i = 1; i < n; ++i) {
             matrix[i][0] = GetTaxicabNorm(baseline, i - 1, 0) + matrix[i - 1][0];
         }
-        cout << endl;
+
         // Set first row
         for (unsigned int j = 1; j < n; ++j) {
             matrix[0][j] = GetTaxicabNorm(baseline, 0, j - 1) + matrix[0][j - 1];
         }
-        cout << endl << endl;
+
         // Do remainder of matrix
         for (unsigned int i = 1; i < n; ++i) {
             for (unsigned int j = 1; j < n; ++j) {
-                matrix[i][j] = GetTaxicabNorm(baseline, i, j) + min(min(matrix[i - 1][j - 1], matrix[i][j - 1]), matrix[i - 1][j]);
+                matrix[i][j] = GetTaxicabNorm(baseline, i, j) + min({matrix[i - 1][j - 1], matrix[i][j - 1], matrix[i - 1][j]});
             }
         }
 
+        // cout << endl << endl;
         // for (auto vec : matrix) {
         //     for (auto f : vec) {
         //         printf("%8.3f  ", f);
@@ -237,7 +284,6 @@ class MultiDimensionalTimeWarping {
         unsigned int i = num_steps_ - 1;
         unsigned int j = num_steps_ - 1;
         while (i != 0 && j != 0) {
-            // cout << "i,j: " << i << "," << j<< endl;
             float left = matrix[i][j - 1];
             float up = matrix[i - 1][j];
             float mid = matrix[i - 1][j - 1];
@@ -269,12 +315,15 @@ class MultiDimensionalTimeWarping {
     vector<float> std_;
     const unsigned int num_features_;
     const unsigned int num_steps_;
-    vector<vector<float> > baseline_;
+    vector<vector<float> > all_in_;
+    vector<vector<float> > cheese_;
+    vector<vector<float> > economic_;
+    vector<vector<float> > timing_;
 
-    float all_in_ = numeric_limits<float>::infinity();
-    float cheese_ = numeric_limits<float>::infinity();
-    float economic_ = numeric_limits<float>::infinity();
-    float timing_ = numeric_limits<float>::infinity();
+    float all_in_dist_ = numeric_limits<float>::infinity();
+    float cheese_dist_ = numeric_limits<float>::infinity();
+    float economic_dist_ = numeric_limits<float>::infinity();
+    float timing_dist_ = numeric_limits<float>::infinity();
 
     vector<float> base_means_;
     vector<float> base_std_;

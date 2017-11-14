@@ -30,8 +30,12 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
 public:
     int step_num = 0;
     std::vector<std::string> fout_strings;
-    std::vector<std::vector<float> > All_In;
+    std::vector<std::vector<float> > all_in_;
+    std::vector<std::vector<float> > cheese_;
+    std::vector<std::vector<float> > economic_;
+    std::vector<std::vector<float> > timing_;
     std::vector<std::vector<float> > time_series;
+
     const unsigned int cols = 9;
     std::ofstream fout;
     bool halt_data = false;
@@ -41,21 +45,16 @@ public:
 
     DynamicTimeWarping() :
         sc2::ReplayObserver() {
-            std::vector<std::string> linez = GetLines("/home/kyle/IntergalacticLifelineI/s2client-api/baselines/all_in_baseline.csv");
+            std::vector<std::string> lines = GetLines("/home/kyle/IntergalacticLifelineI/s2client-api/baselines/all_in_baseline.csv");
             for (unsigned int i = 0; i < cols; ++i)
             {
-                All_In.emplace_back(std::vector<float>(linez.size(), 0.0f));
+                all_in_.emplace_back(std::vector<float>(lines.size(), 0.0f));
+                cheese_.emplace_back(std::vector<float>(lines.size(), 0.0f));
+                economic_.emplace_back(std::vector<float>(lines.size(), 0.0f));
+                timing_.emplace_back(std::vector<float>(lines.size(), 0.0f));
                 time_series.emplace_back(std::vector<float>());
             }
-            // std::vector<std::vector<float> > temp(cols, std::vector<float>(linez.size(), 0.0f));
-            // std::vector<std::vector<float> > temp2(cols, std::vector<float>(linez.size(), 0.0f));
-
-            // time_series = &temp2;//std::vector<std::vector<float> >(cols, std::vector<float>(linez.size(), 0.0f));
-            // All_In = &temp;
-            // std::cout << "All_In" << All_In.size() << "\t";
-            // std::cout << All_In[0].size() << std::endl;
-            // *All_In = temp;
-            for (unsigned int i = 0; i < linez.size(); ++i)
+            for (unsigned int i = 0; i < lines.size(); ++i)
             {
                 // From the end of the line walk backwards looking for commas
                 // Split that bit off and add to the appropriate vector.
@@ -63,15 +62,67 @@ public:
                 size_t pos = 0;
                 for (int j = cols - 1; j > 0; --j)
                 {
-                    pos = linez[i].rfind(",");
-                    All_In[j][i] = std::stof(linez[i].substr(pos + 1));
-                    linez[i].resize(pos);
+                    pos = lines[i].rfind(",");
+                    all_in_[j][i] = std::stof(lines[i].substr(pos + 1));
+                    lines[i].resize(pos);
                 }
                 // Deal with the first column
-                All_In[0][i] = std::stof(linez[i]);
+                all_in_[0][i] = std::stof(lines[i]);
             }
 
+            lines.clear();
+            lines = GetLines("/home/kyle/IntergalacticLifelineI/s2client-api/baselines/cheese_baseline.csv");
+            for (unsigned int i = 0; i < lines.size(); ++i)
+            {
+                // From the end of the line walk backwards looking for commas
+                // Split that bit off and add to the appropriate vector.
+                // Skips first column
+                size_t pos = 0;
+                for (int j = cols - 1; j > 0; --j)
+                {
+                    pos = lines[i].rfind(",");
+                    cheese_[j][i] = std::stof(lines[i].substr(pos + 1));
+                    lines[i].resize(pos);
+                }
+                // Deal with the first column
+                cheese_[0][i] = std::stof(lines[i]);
+            }
 
+            lines.clear();
+            lines = GetLines("/home/kyle/IntergalacticLifelineI/s2client-api/baselines/economic_baseline.csv");
+            for (unsigned int i = 0; i < lines.size(); ++i)
+            {
+                // From the end of the line walk backwards looking for commas
+                // Split that bit off and add to the appropriate vector.
+                // Skips first column
+                size_t pos = 0;
+                for (int j = cols - 1; j > 0; --j)
+                {
+                    pos = lines[i].rfind(",");
+                    economic_[j][i] = std::stof(lines[i].substr(pos + 1));
+                    lines[i].resize(pos);
+                }
+                // Deal with the first column
+                economic_[0][i] = std::stof(lines[i]);
+            }
+
+            lines.clear();
+            lines = GetLines("/home/kyle/IntergalacticLifelineI/s2client-api/baselines/timing_baseline.csv");
+            for (unsigned int i = 0; i < lines.size(); ++i)
+            {
+                // From the end of the line walk backwards looking for commas
+                // Split that bit off and add to the appropriate vector.
+                // Skips first column
+                size_t pos = 0;
+                for (int j = cols - 1; j > 0; --j)
+                {
+                    pos = lines[i].rfind(",");
+                    timing_[j][i] = std::stof(lines[i].substr(pos + 1));
+                    lines[i].resize(pos);
+                }
+                // Deal with the first column
+                timing_[0][i] = std::stof(lines[i]);
+            }
     }
 
     void OpenFile(std::string headers)
@@ -123,7 +174,7 @@ public:
 
         // sc2::Units structures = Observation()->GetUnits(sc2::Unit::Self, IsStructure(Observation()));
         // if (0)
-        if (!halt_data && step_num < 250)  // Stop at roughly 177 seconds or first unit death
+        if (!halt_data && step_num < 7400)  // Stop at roughly 177 seconds or first unit death
         {
             const sc2::ObservationInterface* obs = Observation();
             const sc2::Score& score = obs->GetScore();
@@ -174,15 +225,15 @@ public:
                 time_series[7].push_back(struct_area);
                 time_series[8].push_back(army_dist);
 
+                MultiDimensionalTimeWarping md_dtw(time_series, all_in_, cheese_, economic_, timing_);
 
-                // if (step_num > 4*STEP_SIZE && step_num < 5*STEP_SIZE + 1)
-                {
-                    MultiDimensionalTimeWarping all_in(time_series, All_In);
-                    // // MultiDimensionalTimeWarping cheese(time_series, cheese_);
-                    // // MultiDimensionalTimeWarping economic(time_series, economic_);
-                    // // MultiDimensionalTimeWarping timing(time_series, timing_);
-                    std::cout << "Cheese: " << all_in.GetCheese() << std::endl;//"\t" << cheese.GetCheese() << "\t" << economic.GetCheese() << "\t" << timing.GetCheese() << std::endl;
-                }
+                float all_in = md_dtw.GetAllIn();
+                float cheese = md_dtw.GetCheese();
+                float economic = md_dtw.GetEconomic();
+                float timing = md_dtw.GetTiming();
+                
+                std::cout << md_dtw.MostLikely() << "\t\tAll_In  : " << all_in <<   "\tCheese: " << cheese
+                          << "\tEconomic: " << economic << "\tTiming: " << timing << std::endl;
             }
         }
         step_num += STEP_SIZE;
