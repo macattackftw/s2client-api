@@ -13,7 +13,7 @@
   race_selected:
   game_result:
 -game data
-  min duration:800
+  min duration:
   max duration:
   duration_gameloops:
   num_players:
@@ -25,9 +25,9 @@
   version:
   data_version:
 -path to executable (absolute path, no extra space at the end!)
-~/Downloads/StarCraftII/Versions/Base55958/SC2_x64
+~/Documents/StarCraftII/Versions/Base55958/SC2_x64
 -path to replay (absolute or relative works now!) 
-~/Downloads/StarCraftII/Replays/PvZ/
+~/Documents/StarCraftII/Replays/PvZ/
 
 ************************************************USAGE*************************************************
 to use this file you just need to add the desired information in the format provided by api

@@ -1,20 +1,20 @@
 import sys
 
 def main():
-    files = ('/home/kyle/Downloads/StarCraftII/Replays/PvZ/10351 3.16.1 560180215.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/17357 3.16.1 560180215.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/63692 3.16.1 560180219.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/6526 3.16.1 560180215.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/21698 3.16.1 560180215.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/53662 3.16.1 560180219.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/1560 3.16.1 560180197.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/11052 3.16.1 560180215.000000_dtw.csv',  # Lot of harass
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/60935 3.16.1 560180219.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/25442 3.16.1 560180215.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/61892 3.16.1 560180219.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/58436 3.16.1 560180219.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/42998 3.16.1 560180215.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/26209 3.16.1 560180215.000000_dtw.csv')
+    files = ('/home/kmac/Downloads/StarCraftII/Replays/Baselines/10351 3.16.1 560180215.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/17357 3.16.1 560180215.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/63692 3.16.1 560180219.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/6526 3.16.1 560180215.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/21698 3.16.1 560180215.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/53662 3.16.1 560180219.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/1560 3.16.1 560180197.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/11052 3.16.1 560180215.000000_dtw.csv',  # Lot of harass
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/60935 3.16.1 560180219.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/25442 3.16.1 560180215.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/61892 3.16.1 560180219.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/58436 3.16.1 560180219.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/42998 3.16.1 560180215.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/26209 3.16.1 560180215.000000_dtw.csv')
              
     k_features = 0
     with open(files[0], "r") as file:

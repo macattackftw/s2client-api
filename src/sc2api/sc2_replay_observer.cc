@@ -280,6 +280,8 @@ bool ReplayObserver::IgnoreReplay(const ReplayInfo& replay_info, uint32_t& /*pla
 
 
 float ReplayObserver::GetGameSecond(const int& step_no){
+    if (step_no == 0)
+        return 0.0f;
     return step_no / (float(game_loops_) / game_duration_);
 }
 

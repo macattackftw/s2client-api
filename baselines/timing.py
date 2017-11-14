@@ -1,14 +1,8 @@
 import sys
 
 def main():
-    files = ('/home/kyle/Downloads/StarCraftII/Replays/PvZ/39995 3.16.1 560180215.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/25442 3.16.1 560180215.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/_dtw.csv')
+    files = ('/home/kmac/Downloads/StarCraftII/Replays/Baselines/39995 3.16.1 560180215.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/25442 3.16.1 560180215.000000_dtw.csv')
              
     k_features = 0
     with open(files[0], "r") as file:

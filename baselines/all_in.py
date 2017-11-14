@@ -1,14 +1,14 @@
 import sys
 
 def main():
-    files = ('/home/kyle/Downloads/StarCraftII/Replays/PvZ/42092 3.16.1 560180215.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/42410 3.16.1 560180215.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/2098 3.16.1 560180197.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/22904 3.16.1 560180215.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/48536 3.16.1 560180219.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/22507 3.16.1 560180215.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/52614 3.16.1 560180219.000000_dtw.csv',
-             '/home/kyle/Downloads/StarCraftII/Replays/PvZ/39630 3.16.1 560180215.000000_dtw.csv')
+    files = ('/home/kmac/Downloads/StarCraftII/Replays/Baselines/42092 3.16.1 560180215.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/42410 3.16.1 560180215.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/2098 3.16.1 560180197.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/22904 3.16.1 560180215.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/48536 3.16.1 560180219.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/22507 3.16.1 560180215.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/52614 3.16.1 560180219.000000_dtw.csv',
+             '/home/kmac/Downloads/StarCraftII/Replays/Baselines/39630 3.16.1 560180215.000000_dtw.csv')
              
     k_features = 0
     with open(files[0], "r") as file:
