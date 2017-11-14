@@ -13,7 +13,7 @@
   race_selected:
   game_result:
 -game data
-  min duration:400
+  min duration:320
   max duration:600
   duration_gameloops:
   num_players:

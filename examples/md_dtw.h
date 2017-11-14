@@ -42,6 +42,11 @@ class MultiDimensionalTimeWarping {
         //     std::cout << std::endl;
         // }
         // std::cout << std::endl << std::endl << "END time_series_: \n" ;
+        ApplyWeights(time_series_);
+        ApplyWeights(all_in_);
+        ApplyWeights(cheese_);
+        ApplyWeights(economic_);
+        ApplyWeights(timing_);
 
 
         means_.reserve(num_features_);
@@ -73,8 +78,6 @@ class MultiDimensionalTimeWarping {
         
         // economic_ = FindDist(input_time_series);
         // timing_ = FindDist(input_time_series);
-
-
     }
 
 
@@ -94,9 +97,9 @@ class MultiDimensionalTimeWarping {
     string MostLikely()
     {
         float distances[] = {all_in_dist_, cheese_dist_, economic_dist_, timing_dist_};
-        unsigned int smallest = 0;
+        unsigned int smallest = 4;
 
-        float smallest_val = all_in_dist_;
+        float smallest_val = 999999999999;
 
         for (unsigned int i = 1; i < 4; ++i)
         {
@@ -121,11 +124,25 @@ class MultiDimensionalTimeWarping {
             case 3:
                 return "Timing";
             break;
+            case 4:
+                return "";
+            break;
         }
     }
 
 
   private:
+
+    void ApplyWeights(std::vector<std::vector<float> > &data)
+    {
+        for (unsigned int i = 0; i < num_features_; ++i)
+        {
+            for (unsigned int j = 0; j < data[0].size(); ++j)
+            {
+                data[i][j] *= weights_[i];
+            }
+        }
+    }
 
 
     // Calculates mean for all features. Adds mean to means_ vector for
@@ -327,6 +344,8 @@ class MultiDimensionalTimeWarping {
 
     vector<float> base_means_;
     vector<float> base_std_;
+
+    float weights_[9] = {1.0, 1.1, 1.2, 1.2, 1.1, 1.0, 1.0, 1.3, 1.1};
 
 };
 
