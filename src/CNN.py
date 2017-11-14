@@ -19,12 +19,14 @@ def ans(inputs, in_weights, out_weights):
     #then set up the hidden layer values
     hidden_layer = np.dot(input_t, in_weights)
     layer_out = nonlin(hidden_layer)
+    #print the output guess for debug
+    print layer_out
  
     #finally boil it down into the output values and use the sigmoid for %chance
     hidden_out  = np.dot(layer_out, out_weights)   
     output_vals = nonlin(hidden_out)
    
-    return nonlin(layer_out)
+    return nonlin(output_vals)
 
 
 def train_step(inputs, out_weights, in_weights, ans):
@@ -37,6 +39,7 @@ def train_step(inputs, out_weights, in_weights, ans):
     #then set up the hidden layer values
     hidden_layer = np.dot(input_t, in_weights)
     layer_out = nonlin(hidden_layer)
+    print layer_out
  
     #finally boil it down into the output values and use the sigmoid for %chance
     hidden_out  = np.dot(layer_out, out_weights)   
@@ -58,14 +61,29 @@ input_weights = np.random.random_sample((5, 4))
 output_weights = np.random.random_sample((4, 1))
 test_files = os.listdir(sys.argv[1])
 
-#run the training loop, can add different games over time to imporve accuracy
+#run the training loop, uses the end game state of every game to get a hard training answer
 for i in test_files:
-    ans_in = ScoreCNN.get_output("test_case/"+i, 30)
-    data_in = ScoreCNN.get_input("test_case/"+i, 30)
-    for j in range(1000):
-        train_step(data_in, output_weights, input_weights, ans_in)
+    ans_in = ScoreCNN.get_output("test_case/"+i, -1)
+    data_in = ScoreCNN.get_input("test_case/"+i, -1)
+    train_step(data_in, output_weights, input_weights, ans_in)
 
+#test the wieghts against predictions
+#testing for a cheese prediction
+print ("Cheese-timing-all_in-economy")
+data_in = np.array([1, 0, 0, 150, 150])
 print ans(data_in, input_weights, output_weights)
+#testing for an all in prediction
+data_in = np.array([0, 1, 0, 500, 150])
+print ans(data_in, input_weights, output_weights)
+#testing for a timing prediction
+data_in = np.array([0, 1, 0, 150, 500])
+print ans(data_in, input_weights, output_weights)
+#testing for economy
+data_in = np.array([0, 0, 1, 1000, 1250])
+print ans(data_in, input_weights, output_weights)
+
+
+
 
 
 

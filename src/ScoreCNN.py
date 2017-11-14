@@ -5,7 +5,7 @@ import sys, csv
 #this function takes a game state of 5 variables and based on the wieghts gives the likelyhood of the 4 main strats
 def classify(bases, gas, army, struct, time):
     #equations change drastically when a base is built, this easiest way is to split into 4 base catagories since anyhting after 4 is flat out economic
-    if(bases == 1):
+    if(bases < 2):
 	#min maxes to control how much a variable can affect judgement and the devides control importance of the variable
         timing = 30 + min(gas/15, 10) + min(army/200, 10) + min((time-60)/15, 10) - min((time-60)/15, 30)
         all_in = 10 + min(army/50, 50) - min(struct/100, 10) + min((time-60)/15, 20) + min(max((time-120)/10, 0), 20)
@@ -47,20 +47,20 @@ def get_input(filename, time):
         data.pop(0)
 
 
-        if(int(data[time][0]) == 1):
+        if(int(data[len(data)-1][0]) < 2):
             In_arr[0][0]=1
             In_arr[0][1]=0
             In_arr[0][2]=0
-        if(int(data[time][0]) == 2):
+        if(int(data[len(data)-1][0]) == 2):
             In_arr[0][0]=0
             In_arr[0][1]=1
             In_arr[0][2]=0
-        if(int(data[time][0]) > 2):
+        if(int(data[len(data)-1][0]) > 2):
             In_arr[0][0]=0
             In_arr[0][1]=0
             In_arr[0][2]=1
-        In_arr[0][3]=float(data[time][2])
-        In_arr[0][4]=float(data[time][3])
+        In_arr[0][3]=0
+        In_arr[0][4]=0
     return In_arr
 
     
@@ -71,11 +71,32 @@ def get_output(filename, time):
         data = list( reader )       # convert the csv reader object (a generator) to a list (of lists)
         data.pop(0)
 
-        ch, tm, ai, ec = classify(float(data[time+1][0]), float(data[time+1][1]), float(data[time+1][2]), float(data[time+1][4]), float(data[time+1][5]))
-        ch = float(round(ch,2))
-        tm = float(round(tm,2))
-        ai = float(round(ai,2))
-        ec = float(round(ec,2))
+    ch, tm, ai, ec = classify(float(data[len(data)-1][0]), float(data[len(data)-1][1]), float(data[len(data)-1][2]), float(data[len(data)-1][4]), float(data[len(data)-1][5]))
+    ch = float(round(ch,2))
+    tm = float(round(tm,2))
+    ai = float(round(ai,2)) 
+    ec = float(round(ec,2))
+
+    if(ch > tm and ch > ai and ch > ec):
+        ch = 1
+        tm = 0
+        ai = 0
+        ec = 0     
+    elif(tm > ch and tm > ai and tm > ec):
+        ch = 0
+        tm = 1
+        ai = 0
+        ec = 0  
+    elif(ai > tm and ai > ch and ai > ec):
+        ch = 0
+        tm = 0
+        ai = 1
+        ec = 0  
+    elif(ec > tm and ec > ai and ec > ch):
+        ch = 0
+        tm = 0
+        ai = 0
+        ec = 1 
 
 
         #print(i[0] + " bases\n" + i[1] + " gas income% \n" + i[2] + " army value\n"
