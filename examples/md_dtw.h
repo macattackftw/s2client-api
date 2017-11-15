@@ -27,41 +27,11 @@ class MultiDimensionalTimeWarping {
         num_features_(input_time_series.size()), num_steps_(input_time_series[0].size()),
         time_series_(input_time_series), all_in_(all_in), cheese_(cheese), economic_(economic), timing_(timing) {
 
-        // cout << "BSIZE: " << b_line.size() << endl;
-        // baseline_ = b_line;
-
-        // std::cout << std::endl << std::endl << "START cheese_: \n" ;
-        // cout << "cheese_[0].size(): " << cheese_[0].size() <<endl;
-        // for (unsigned int i = 0; i < cheese_.size(); ++i)
-        // {
-        //     for (unsigned int j = 0; j < cheese_[0].size() - 1; ++j)
-        //     {
-        //         std::cout << setprecision(3) << fixed << cheese_[i][j] << ",";
-        //     }
-        //     std::cout << setprecision(3) << fixed << cheese_[i][cheese_[0].size() - 1];
-        //     std::cout << std::endl;
-        // }
-        // std::cout << std::endl << std::endl << "END cheese_: \n" ;
-
-
-        // std::cout << std::endl << std::endl << "START economic_: \n" ;
-        // cout << "economic_[0].size(): " << economic_[0].size() <<endl;
-        // for (unsigned int i = 0; i < economic_.size(); ++i)
-        // {
-        //     for (unsigned int j = 0; j < economic_[0].size() - 1; ++j)
-        //     {
-        //         std::cout << setprecision(3) << fixed << economic_[i][j] << ",";
-        //     }
-        //     std::cout << setprecision(3) << fixed << economic_[i][economic_[0].size() - 1];
-        //     std::cout << std::endl;
-        // }
-        // std::cout << std::endl << std::endl << "END economic_: \n" ;
-
-        ApplyWeights(time_series_);
-        ApplyWeights(all_in_);
-        ApplyWeights(cheese_);
-        ApplyWeights(economic_);
-        ApplyWeights(timing_);
+        // ApplyWeights(time_series_);
+        // ApplyWeights(all_in_);
+        // ApplyWeights(cheese_);
+        // ApplyWeights(economic_);
+        // ApplyWeights(timing_);
 
 
         means_.reserve(num_features_);
@@ -69,10 +39,6 @@ class MultiDimensionalTimeWarping {
 
         // FillMeanAndStd();
         // ApplyZeroMean();
-        // FindDist() will use a vector<vector<float>> from a .h file, it is constant
-        // vector<vector<float> > cheese;
-        // cheese = input_time_series;
-        // baseline_ = b_line;
 
         // FillMeanAndStd(all_in_);
         // ApplyZeroMean(all_in_);
@@ -91,10 +57,6 @@ class MultiDimensionalTimeWarping {
         // FillMeanAndStd(timing_);
         // ApplyZeroMean(timing_);
         timing_dist_ = FindDist(timing_);
-        // all_in_ = FindDist(input_time_series);
-        
-        // economic_ = FindDist(input_time_series);
-        // timing_ = FindDist(input_time_series);
     }
 
 
@@ -116,9 +78,9 @@ class MultiDimensionalTimeWarping {
         float distances[] = {all_in_dist_, cheese_dist_, economic_dist_, timing_dist_};
         unsigned int smallest = 4;
 
-        float smallest_val = 9999999;
+        float smallest_val = 9999999.0f;
 
-        for (unsigned int i = 1; i < 4; ++i)
+        for (unsigned int i = 0; i < 4; ++i)
         {
             if (distances[i] < smallest_val)
             {
@@ -362,7 +324,8 @@ class MultiDimensionalTimeWarping {
     vector<float> base_means_;
     vector<float> base_std_;
 
-    float weights_[9] = {1.0, 1.1, 1.2, 1.2, 1.1, 1.0, 1.0, 1.3, 1.1};
+    float weights_[9] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
 
 };
 

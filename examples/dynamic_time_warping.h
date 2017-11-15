@@ -40,7 +40,7 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
     std::ofstream fout;
     bool halt_data = false;
     int probes = 0, adepts = 0; // initial scout
-    bool file_write_flag = true;
+    bool file_write_flag = false;
 
 
     DynamicTimeWarping() :
@@ -234,6 +234,16 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
                 time_series[7].push_back(struct_area);
                 time_series[8].push_back(army_dist);
 
+                std::string output = std::to_string(time_series[1].back()) + "\t" + 
+                                     std::to_string(time_series[2].back()) + "\t" + 
+                                     std::to_string(time_series[3].back()) + "\t" + 
+                                     std::to_string(time_series[4].back()) + "\t" + 
+                                     std::to_string(time_series[5].back()) + "\t" + 
+                                     std::to_string(time_series[6].back()) + "\t" + 
+                                     std::to_string(time_series[7].back()) + "\t" + 
+                                     std::to_string(time_series[8].back());
+
+                std::cout << output << std::endl;
 
                 // cout << endl;
                 // cout << time_series[0].back() << endl;
