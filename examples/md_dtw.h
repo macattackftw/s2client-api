@@ -30,18 +30,33 @@ class MultiDimensionalTimeWarping {
         // cout << "BSIZE: " << b_line.size() << endl;
         // baseline_ = b_line;
 
-        // std::cout << std::endl << std::endl << "START time_series_: \n" ;
-        // cout << "time_series_[0].size(): " << time_series_[0].size() <<endl;
-        // for (unsigned int i = 0; i < time_series_.size(); ++i)
+        // std::cout << std::endl << std::endl << "START cheese_: \n" ;
+        // cout << "cheese_[0].size(): " << cheese_[0].size() <<endl;
+        // for (unsigned int i = 0; i < cheese_.size(); ++i)
         // {
-        //     for (unsigned int j = 0; j < time_series_[0].size() - 1; ++j)
+        //     for (unsigned int j = 0; j < cheese_[0].size() - 1; ++j)
         //     {
-        //         std::cout << setprecision(3) << fixed << time_series_[i][j] << ",";
+        //         std::cout << setprecision(3) << fixed << cheese_[i][j] << ",";
         //     }
-        //     std::cout << setprecision(3) << fixed << time_series_[i][time_series_[0].size() - 1];
+        //     std::cout << setprecision(3) << fixed << cheese_[i][cheese_[0].size() - 1];
         //     std::cout << std::endl;
         // }
-        // std::cout << std::endl << std::endl << "END time_series_: \n" ;
+        // std::cout << std::endl << std::endl << "END cheese_: \n" ;
+
+
+        // std::cout << std::endl << std::endl << "START economic_: \n" ;
+        // cout << "economic_[0].size(): " << economic_[0].size() <<endl;
+        // for (unsigned int i = 0; i < economic_.size(); ++i)
+        // {
+        //     for (unsigned int j = 0; j < economic_[0].size() - 1; ++j)
+        //     {
+        //         std::cout << setprecision(3) << fixed << economic_[i][j] << ",";
+        //     }
+        //     std::cout << setprecision(3) << fixed << economic_[i][economic_[0].size() - 1];
+        //     std::cout << std::endl;
+        // }
+        // std::cout << std::endl << std::endl << "END economic_: \n" ;
+
         ApplyWeights(time_series_);
         ApplyWeights(all_in_);
         ApplyWeights(cheese_);
@@ -52,27 +67,29 @@ class MultiDimensionalTimeWarping {
         means_.reserve(num_features_);
         std_.reserve(num_features_);
 
-        FillMeanAndStd();
-        ApplyZeroMean();
+        // FillMeanAndStd();
+        // ApplyZeroMean();
         // FindDist() will use a vector<vector<float>> from a .h file, it is constant
         // vector<vector<float> > cheese;
         // cheese = input_time_series;
         // baseline_ = b_line;
 
-        FillMeanAndStd(all_in_);
-        ApplyZeroMean(all_in_);
+        // FillMeanAndStd(all_in_);
+        // ApplyZeroMean(all_in_);
         all_in_dist_ = FindDist(all_in_);
 
-        FillMeanAndStd(cheese_);
-        ApplyZeroMean(cheese_);
-        cheese_dist_ = FindDist(cheese_);
 
-        FillMeanAndStd(economic_);
-        ApplyZeroMean(economic_);
+        // FillMeanAndStd(economic_);
+        // ApplyZeroMean(economic_);
         economic_dist_ = FindDist(economic_);
 
-        FillMeanAndStd(timing_);
-        ApplyZeroMean(timing_);
+
+        // FillMeanAndStd(cheese_);
+        // ApplyZeroMean(cheese_);
+        cheese_dist_ = FindDist(cheese_);
+
+        // FillMeanAndStd(timing_);
+        // ApplyZeroMean(timing_);
         timing_dist_ = FindDist(timing_);
         // all_in_ = FindDist(input_time_series);
         
@@ -99,7 +116,7 @@ class MultiDimensionalTimeWarping {
         float distances[] = {all_in_dist_, cheese_dist_, economic_dist_, timing_dist_};
         unsigned int smallest = 4;
 
-        float smallest_val = 999999999999;
+        float smallest_val = 9999999;
 
         for (unsigned int i = 1; i < 4; ++i)
         {
@@ -240,7 +257,7 @@ class MultiDimensionalTimeWarping {
     float FindDist(const vector<vector<float> > &baseline) {
         // Fill nxn matrix with inf
         const unsigned int n = num_steps_ + 1;
-        vector<vector<float> > matrix(n, vector<float>(n, numeric_limits<float>::infinity()));
+        vector<vector<float> > matrix(n, vector<float>(n, 999999999.0f));
 
         // Will pull from .h file that has const vector<vector<float> for each strategy. The following line is filler:
         // baseline == matrix;

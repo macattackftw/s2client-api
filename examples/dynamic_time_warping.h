@@ -40,7 +40,7 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
     std::ofstream fout;
     bool halt_data = false;
     int probes = 0, adepts = 0; // initial scout
-    bool file_write_flag = false;
+    bool file_write_flag = true;
 
 
     DynamicTimeWarping() :
@@ -69,6 +69,7 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
 
         lines.clear();
         lines = GetLines("/home/kyle/IntergalacticLifelineI/s2client-api/baselines/cheese_baseline.csv");
+        std::cout << "Cheeselines: " << lines.size() << std::endl;
         for (unsigned int i = 0; i < lines.size(); ++i) {
             // From the end of the line walk backwards looking for commas
             // Split that bit off and add to the appropriate vector.
@@ -85,6 +86,7 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
 
         lines.clear();
         lines = GetLines("/home/kyle/IntergalacticLifelineI/s2client-api/baselines/economic_baseline.csv");
+        std::cout << "economiclines: " << lines.size() << std::endl;
         for (unsigned int i = 0; i < lines.size(); ++i) {
             // From the end of the line walk backwards looking for commas
             // Split that bit off and add to the appropriate vector.
@@ -232,11 +234,23 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
                 time_series[7].push_back(struct_area);
                 time_series[8].push_back(army_dist);
 
+
+                // cout << endl;
+                // cout << time_series[0].back() << endl;
+                // cout << time_series[1].back() << endl;
+                // cout << time_series[2].back() << endl;
+                // cout << time_series[3].back() << endl;
+                // cout << time_series[4].back() << endl;
+                // cout << time_series[5].back() << endl;
+                // cout << time_series[6].back() << endl;
+                // cout << time_series[7].back() << endl;
+                // cout << time_series[8].back() << endl;
+
                 MultiDimensionalTimeWarping md_dtw(time_series, all_in_, cheese_, economic_, timing_);
 
                 float all_in = md_dtw.GetAllIn();
                 float cheese = md_dtw.GetCheese();
-                float economic = md_dtw.GetEconomic();
+                float economic = md_dtw.GetEconomic();  // 4.357142857142857
                 float timing = md_dtw.GetTiming();
 
                 // Sometimes the data goes nuts???

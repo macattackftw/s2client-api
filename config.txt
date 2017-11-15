@@ -1,20 +1,20 @@
 -p0 data
   player_id:
-  mmr:3400
+  mmr:4500
   apm:50
   race:Protoss
   race_selected:
   game_result:Win
 -p1 data
   player_id:
-  mmr:3400
+  mmr:4500
   apm:50
   race:Zerg
   race_selected:
   game_result:
 -game data
-  min duration:320
-  max duration:600
+  min duration:720
+  max duration:1200
   duration_gameloops:
   num_players:
   data_build:
