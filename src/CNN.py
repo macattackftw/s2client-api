@@ -39,7 +39,6 @@ def train_step(inputs, out_weights, in_weights, ans):
     #then set up the hidden layer values
     hidden_layer = np.dot(input_t, in_weights)
     layer_out = nonlin(hidden_layer)
-    print layer_out
  
     #finally boil it down into the output values and use the sigmoid for %chance
     hidden_out  = np.dot(layer_out, out_weights)   
@@ -70,16 +69,16 @@ for i in test_files:
 #test the wieghts against predictions
 #testing for a cheese prediction
 print ("Cheese-timing-all_in-economy")
-data_in = np.array([1, 0, 0, 150, 150])
+data_in = np.array([1, 0, 0, 0, 0])
 print ans(data_in, input_weights, output_weights)
 #testing for an all in prediction
-data_in = np.array([0, 1, 0, 500, 150])
+data_in = np.array([0, 1, 0, 0, 0])
 print ans(data_in, input_weights, output_weights)
 #testing for a timing prediction
-data_in = np.array([0, 1, 0, 150, 500])
+data_in = np.array([0, 1, 0, 0, 0])
 print ans(data_in, input_weights, output_weights)
 #testing for economy
-data_in = np.array([0, 0, 1, 1000, 1250])
+data_in = np.array([0, 0, 1, 0, 0])
 print ans(data_in, input_weights, output_weights)
 
 
