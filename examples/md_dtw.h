@@ -22,7 +22,7 @@ using namespace std;
 class MultiDimensionalTimeWarping {
   public:
 
-    MultiDimensionalTimeWarping(vector<vector<float> > input_time_series, vector<vector<float> > all_in, 
+    MultiDimensionalTimeWarping(vector<vector<float> > input_time_series, vector<vector<float> > all_in,
                                 vector<vector<float> > cheese, vector<vector<float> > economic, vector<vector<float> > timing) :
         num_features_(input_time_series.size()), num_steps_(input_time_series[0].size()),
         time_series_(input_time_series), all_in_(all_in), cheese_(cheese), economic_(economic), timing_(timing) {
@@ -34,8 +34,8 @@ class MultiDimensionalTimeWarping {
         // ApplyWeights(timing_);
 
 
-        means_.reserve(num_features_);
-        std_.reserve(num_features_);
+        // means_.reserve(num_features_);
+        // std_.reserve(num_features_);
 
         // FillMeanAndStd();
         // ApplyZeroMean();
@@ -73,38 +73,34 @@ class MultiDimensionalTimeWarping {
         return timing_dist_;
     }
 
-    string MostLikely()
-    {
+    string MostLikely() {
         float distances[] = {all_in_dist_, cheese_dist_, economic_dist_, timing_dist_};
         unsigned int smallest = 4;
 
-        float smallest_val = 9999999.0f;
+        float smallest_val = numeric_limits<float>::infinity();
 
-        for (unsigned int i = 0; i < 4; ++i)
-        {
-            if (distances[i] < smallest_val)
-            {
+        for (unsigned int i = 0; i < 4; ++i) {
+            if (distances[i] < smallest_val) {
                 smallest = i;
                 smallest_val = distances[i];
             }
         }
 
-        switch(smallest)
-        {
-            case 0:
-                return "All_In";
+        switch (smallest) {
+        case 0:
+            return "All_In";
             break;
-            case 1:
-                return "Cheese";
+        case 1:
+            return "Cheese";
             break;
-            case 2:
-                return "Economic";
+        case 2:
+            return "Economic";
             break;
-            case 3:
-                return "Timing";
+        case 3:
+            return "Timing";
             break;
-            case 4:
-                return "";
+        case 4:
+            return "";
             break;
         }
     }
@@ -112,12 +108,9 @@ class MultiDimensionalTimeWarping {
 
   private:
 
-    void ApplyWeights(std::vector<std::vector<float> > &data)
-    {
-        for (unsigned int i = 0; i < num_features_; ++i)
-        {
-            for (unsigned int j = 0; j < data[0].size(); ++j)
-            {
+    void ApplyWeights(std::vector<std::vector<float> > &data) {
+        for (unsigned int i = 0; i < num_features_; ++i) {
+            for (unsigned int j = 0; j < data[0].size(); ++j) {
                 data[i][j] *= weights_[i];
             }
         }
@@ -218,8 +211,7 @@ class MultiDimensionalTimeWarping {
 
     float FindDist(const vector<vector<float> > &baseline) {
         // Fill nxn matrix with inf
-        const unsigned int n = num_steps_ + 1;
-        vector<vector<float> > matrix(n, vector<float>(n, 999999999.0f));
+        vector<vector<float> > matrix(num_steps_, vector<float>(num_steps_, numeric_limits<float>::infinity()));
 
         // Will pull from .h file that has const vector<vector<float> for each strategy. The following line is filler:
         // baseline == matrix;
@@ -229,18 +221,18 @@ class MultiDimensionalTimeWarping {
 
         // Do edges
         // Set first column
-        for (unsigned int i = 1; i < n; ++i) {
+        for (unsigned int i = 1; i < num_steps_; ++i) {
             matrix[i][0] = GetTaxicabNorm(baseline, i - 1, 0) + matrix[i - 1][0];
         }
 
         // Set first row
-        for (unsigned int j = 1; j < n; ++j) {
+        for (unsigned int j = 1; j < num_steps_; ++j) {
             matrix[0][j] = GetTaxicabNorm(baseline, 0, j - 1) + matrix[0][j - 1];
         }
 
         // Do remainder of matrix
-        for (unsigned int i = 1; i < n; ++i) {
-            for (unsigned int j = 1; j < n; ++j) {
+        for (unsigned int i = 1; i < num_steps_; ++i) {
+            for (unsigned int j = 1; j < num_steps_; ++j) {
                 matrix[i][j] = GetTaxicabNorm(baseline, i, j) + min({matrix[i - 1][j - 1], matrix[i][j - 1], matrix[i - 1][j]});
             }
         }
@@ -273,13 +265,13 @@ class MultiDimensionalTimeWarping {
 
     // Start in the corner and walk the matrix looking for the smallest path
     float WalkMatrix(const vector<vector<float> > &matrix) {
+        int i = num_steps_ - 1;
+        int j = num_steps_ - 1;
         // Corner value:
-        float ret_val = matrix[num_steps_ ][num_steps_ ];
-
+        float ret_val = matrix[i--][j--];
+        
         // Check each 2x2 block on the way down the matrix until we hit 0,0
-        unsigned int i = num_steps_ - 1;
-        unsigned int j = num_steps_ - 1;
-        while (i != 0 && j != 0) {
+        while (i > 1 && j > 1) {
             float left = matrix[i][j - 1];
             float up = matrix[i - 1][j];
             float mid = matrix[i - 1][j - 1];
@@ -301,6 +293,7 @@ class MultiDimensionalTimeWarping {
                 --i;
                 ret_val += up;
             }
+            // cout << "\t\tLOOPING!" << endl;
         }
         return ret_val;
     }
@@ -324,7 +317,8 @@ class MultiDimensionalTimeWarping {
     vector<float> base_means_;
     vector<float> base_std_;
 
-    float weights_[9] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+    // float weights_[9] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+    float weights_[9] = {1.0, 1.0, 1.1, 1.0, 1.1, 1.0, 1.0, 1.0, 1.0};
 
 
 };

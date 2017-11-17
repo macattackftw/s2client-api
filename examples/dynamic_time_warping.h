@@ -40,7 +40,7 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
     std::ofstream fout;
     bool halt_data = false;
     int probes = 0, adepts = 0; // initial scout
-    bool file_write_flag = false;
+    bool file_write_flag = true;
 
 
     DynamicTimeWarping() :
@@ -197,19 +197,21 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
                 time_series[6].push_back(upg_vesp);
                 time_series[7].push_back(struct_area);
                 time_series[8].push_back(army_dist);
-
-                MultiDimensionalTimeWarping md_dtw(time_series, all_in_, cheese_, economic_, timing_);
-
-                float all_in = md_dtw.GetAllIn();
-                float cheese = md_dtw.GetCheese();
-                float economic = md_dtw.GetEconomic();
-                float timing = md_dtw.GetTiming();
-
-                // Sometimes the data goes nuts???
-                if (all_in < 9999999 && cheese < 9999999 && economic < 9999999 && timing < 9999999 )
+                if (step_num > 2*STEP_SIZE)
                 {
-                    fout_strings.emplace_back(std::to_string(GetGameSecond(step_num)) + "\t" + md_dtw.MostLikely() + "\t\tAll_In  : " + std::to_string(all_in) + "\tCheese: " + std::to_string(cheese)
-                          + "\tEconomic: " + std::to_string(economic) + "\tTiming: " + std::to_string(timing) + "\n");
+                    MultiDimensionalTimeWarping md_dtw(time_series, all_in_, cheese_, economic_, timing_);
+
+                    float all_in = md_dtw.GetAllIn();
+                    float cheese = md_dtw.GetCheese();
+                    float economic = md_dtw.GetEconomic();
+                    float timing = md_dtw.GetTiming();
+
+                    // Sometimes the data goes nuts???
+                    if (all_in < numeric_limits<float>::infinity() && cheese < numeric_limits<float>::infinity() && economic < numeric_limits<float>::infinity() && timing < numeric_limits<float>::infinity() )
+                    {
+                        fout_strings.emplace_back(std::to_string(GetGameSecond(step_num)) + "\t" + md_dtw.MostLikely() + "\t\tAll_In  : " + std::to_string(all_in) + "\tCheese: " + std::to_string(cheese)
+                              + "\tEconomic: " + std::to_string(economic) + "\tTiming: " + std::to_string(timing) + "\n");
+                    }
                 }
 
 
@@ -255,19 +257,21 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
                 // cout << time_series[6].back() << endl;
                 // cout << time_series[7].back() << endl;
                 // cout << time_series[8].back() << endl;
-
-                MultiDimensionalTimeWarping md_dtw(time_series, all_in_, cheese_, economic_, timing_);
-
-                float all_in = md_dtw.GetAllIn();
-                float cheese = md_dtw.GetCheese();
-                float economic = md_dtw.GetEconomic();  // 4.357142857142857
-                float timing = md_dtw.GetTiming();
-
-                // Sometimes the data goes nuts???
-                if (all_in < 9999999 && cheese < 9999999 && economic < 9999999 && timing < 9999999 )
+                if (step_num > 2*STEP_SIZE)
                 {
-                    std::cout << GetGameSecond(step_num) << "\t" << md_dtw.MostLikely() << "\t\tAll_In  : " << all_in <<   "\tCheese: " << cheese
-                              << "\tEconomic: " << economic << "\tTiming: " << timing << std::endl;
+                    MultiDimensionalTimeWarping md_dtw(time_series, all_in_, cheese_, economic_, timing_);
+
+                    float all_in = md_dtw.GetAllIn();
+                    float cheese = md_dtw.GetCheese();
+                    float economic = md_dtw.GetEconomic();  // 4.357142857142857
+                    float timing = md_dtw.GetTiming();
+
+                    // Sometimes the data goes nuts???
+                    if (all_in < numeric_limits<float>::infinity() && cheese < numeric_limits<float>::infinity() && economic < numeric_limits<float>::infinity() && timing < numeric_limits<float>::infinity() )
+                    {
+                        std::cout << GetGameSecond(step_num) << "\t" << md_dtw.MostLikely() << "\t\tAll_In  : " << all_in <<   "\tCheese: " << cheese
+                                  << "\tEconomic: " << economic << "\tTiming: " << timing << std::endl;
+                    }
                 }
             }
         }
