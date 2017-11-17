@@ -73,7 +73,7 @@ class MultiDimensionalTimeWarping {
         return timing_dist_;
     }
 
-    string MostLikely() {
+    string MostLikely(float seconds) {
         float distances[] = {all_in_dist_, cheese_dist_, economic_dist_, timing_dist_};
         unsigned int smallest = 4;
 
@@ -85,24 +85,30 @@ class MultiDimensionalTimeWarping {
                 smallest_val = distances[i];
             }
         }
+        string ret_val = "";
 
         switch (smallest) {
         case 0:
-            return "All_In";
+            ret_val = "All_In";
             break;
         case 1:
-            return "Cheese";
+            ret_val = "Cheese";
             break;
         case 2:
-            return "Economic";
+            ret_val = "Economic";
             break;
         case 3:
-            return "Timing";
-            break;
-        case 4:
-            return "";
+            ret_val = "Timing";
             break;
         }
+
+        // Cheese or not cheese before 90 seconds
+        if (seconds < 90.0f)   // Need to find this timing
+        {
+            if (ret_val != "Cheese")
+                ret_val = "Economic";
+        }
+        return ret_val;
     }
 
 
@@ -269,7 +275,7 @@ class MultiDimensionalTimeWarping {
         int j = num_steps_ - 1;
         // Corner value:
         float ret_val = matrix[i--][j--];
-        
+
         // Check each 2x2 block on the way down the matrix until we hit 0,0
         while (i > 1 && j > 1) {
             float left = matrix[i][j - 1];

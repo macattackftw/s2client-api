@@ -40,7 +40,7 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
     std::ofstream fout;
     bool halt_data = false;
     int probes = 0, adepts = 0; // initial scout
-    bool file_write_flag = true;
+    bool file_write_flag = false;
 
 
     DynamicTimeWarping() :
@@ -209,7 +209,7 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
                     // Sometimes the data goes nuts???
                     if (all_in < numeric_limits<float>::infinity() && cheese < numeric_limits<float>::infinity() && economic < numeric_limits<float>::infinity() && timing < numeric_limits<float>::infinity() )
                     {
-                        fout_strings.emplace_back(std::to_string(GetGameSecond(step_num)) + "\t" + md_dtw.MostLikely() + "\t\tAll_In  : " + std::to_string(all_in) + "\tCheese: " + std::to_string(cheese)
+                        fout_strings.emplace_back(std::to_string(time_series[0].back()) + "\t" + md_dtw.MostLikely(time_series[0].back()) + "\t\tAll_In  : " + std::to_string(all_in) + "\tCheese: " + std::to_string(cheese)
                               + "\tEconomic: " + std::to_string(economic) + "\tTiming: " + std::to_string(timing) + "\n");
                     }
                 }
@@ -269,7 +269,7 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
                     // Sometimes the data goes nuts???
                     if (all_in < numeric_limits<float>::infinity() && cheese < numeric_limits<float>::infinity() && economic < numeric_limits<float>::infinity() && timing < numeric_limits<float>::infinity() )
                     {
-                        std::cout << GetGameSecond(step_num) << "\t" << md_dtw.MostLikely() << "\t\tAll_In  : " << all_in <<   "\tCheese: " << cheese
+                        std::cout << time_series[0].back() << "\t" << md_dtw.MostLikely(time_series[0].back()) << "\t\tAll_In  : " << all_in <<   "\tCheese: " << cheese
                                   << "\tEconomic: " << economic << "\tTiming: " << timing << std::endl;
                     }
                 }
