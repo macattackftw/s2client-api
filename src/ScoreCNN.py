@@ -39,71 +39,69 @@ def classify(bases, gas, army, struct, time):
         cheese = 0.0
     return cheese, timing, all_in, economy
 
-def get_input(filename, time):
-    In_arr = np.random.random((1, 5))
-    with open( filename ) as fin:
+def get_input(filename):
+
+   with open( filename ) as fin:
         reader = csv.reader( fin )  # read the file with the csv reader
         data = list( reader )       # convert the csv reader object (a generator) to a list (of 
         data.pop(0)
-
-
-        if(int(data[len(data)-1][0]) < 2):
-            In_arr[0][0]=1
-            In_arr[0][1]=0
-            In_arr[0][2]=0
-        if(int(data[len(data)-1][0]) == 2):
-            In_arr[0][0]=0
-            In_arr[0][1]=1
-            In_arr[0][2]=0
-        if(int(data[len(data)-1][0]) > 2):
-            In_arr[0][0]=0
-            In_arr[0][1]=0
-            In_arr[0][2]=1
-        In_arr[0][3]=0
-        In_arr[0][4]=0
-    return In_arr
+        In_arr = np.empty([len(data), 5])
+        count = 0
+        for i in data:
+            if(int(i[0]) < 2):
+                In_arr[count][0]=1
+                In_arr[count][1]=0
+                In_arr[count][2]=0
+            if(int(i[0]) == 2):
+                In_arr[count][0]=0
+                In_arr[count][1]=1
+                In_arr[count][2]=0
+            if(int(i[0]) > 2):
+                In_arr[count][0]=0
+                In_arr[count][1]=0
+                In_arr[count][2]=1
+            In_arr[count][3]=0
+            In_arr[count][4]=0
+            count += 1
+        return In_arr
 
     
-def get_output(filename, time):
+def get_output(filename):
     # open CSV file (automatically closed at end of with stmt)
     with open( filename ) as fin:
         reader = csv.reader( fin )  # read the file with the csv reader
         data = list( reader )       # convert the csv reader object (a generator) to a list (of lists)
         data.pop(0)
+    Out_arr = np.empty([len(data), 4])
+    count = 0
+    for i in data:
+        ch, tm, ai, ec = classify(float(i[0]), float(i[1]), float(i[2]), float(i[4]), float(i[5]))
+        ch = float(round(ch,2))
+        tm = float(round(tm,2))
+        ai = float(round(ai,2)) 
+        ec = float(round(ec,2))  
+        if(ch > tm and ch > ai and ch > ec):
+            Out_arr[count][0] = 1
+            Out_arr[count][1] = 0
+            Out_arr[count][2] = 0
+            Out_arr[count][3] = 0     
+        elif(tm > ch and tm > ai and tm > ec):
+            Out_arr[count][0] = 0
+            Out_arr[count][1] = 1
+            Out_arr[count][2] = 0
+            Out_arr[count][3] = 0     
+        elif(ai > tm and ai > ch and ai > ec):
+            Out_arr[count][0] = 0
+            Out_arr[count][1] = 0
+            Out_arr[count][2] = 1
+            Out_arr[count][3] = 0    
+        elif(ec > tm and ec > ai and ec > ch):
+            Out_arr[count][0] = 0
+            Out_arr[count][1] = 0
+            Out_arr[count][2] = 0
+            Out_arr[count][3] = 1     
+        count += 1
 
-    ch, tm, ai, ec = classify(float(data[len(data)-1][0]), float(data[len(data)-1][1]), float(data[len(data)-1][2]), float(data[len(data)-1][4]), float(data[len(data)-1][5]))
-    ch = float(round(ch,2))
-    tm = float(round(tm,2))
-    ai = float(round(ai,2)) 
-    ec = float(round(ec,2))
-
-    if(ch > tm and ch > ai and ch > ec):
-        ch = 1
-        tm = 0
-        ai = 0
-        ec = 0     
-    elif(tm > ch and tm > ai and tm > ec):
-        ch = 0
-        tm = 1
-        ai = 0
-        ec = 0  
-    elif(ai > tm and ai > ch and ai > ec):
-        ch = 0
-        tm = 0
-        ai = 1
-        ec = 0  
-    elif(ec > tm and ec > ai and ec > ch):
-        ch = 0
-        tm = 0
-        ai = 0
-        ec = 1 
-
-
-        #print(i[0] + " bases\n" + i[1] + " gas income% \n" + i[2] + " army value\n"
-        #    + i[4] +   " structure value\n" + i[5] + " seconds\n")
-        #print(ch + "% cheese\n" + tm + "% timing\n" + ai + "% all in\n" + ec + "% economic\n")
-
-    Out_arr = np.array([[ch],[tm],[ai],[ec]])
     return Out_arr
 
 
