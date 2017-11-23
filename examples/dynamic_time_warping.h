@@ -25,6 +25,7 @@ const int STEP_SIZE = 22;
 const int PLAYER_ID = 1;
 static int replay_count = 0;
 
+//functions to determine what visability a unit has
 bool in_Vision(const sc2::Unit &unit)
 {
     if(unit.display_type == Visable)
