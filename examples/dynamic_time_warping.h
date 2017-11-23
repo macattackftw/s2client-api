@@ -25,6 +25,25 @@ const int STEP_SIZE = 22;
 const int PLAYER_ID = 1;
 static int replay_count = 0;
 
+bool in_Vision(const sc2::Unit &unit)
+{
+    if(unit.display_type == Visable)
+        return true;
+    return false;
+}
+
+bool in_Fog(const sc2::Unit &unit)
+{
+    if(unit.display_type == Snapshot)
+        return true;
+    return false;
+}
+bool discovered(const sc2::Unit &unit)
+{
+    if(unit.display_type == Hidden)
+        return false;
+    return true;
+}
 
 class DynamicTimeWarping : public sc2::ReplayObserver {
   public:
@@ -158,7 +177,8 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
 
 
     void OnStep() {
-
+        
+        Filter seen = discovered;
         // sc2::Units structures = Observation()->GetUnits(sc2::Unit::Self, IsStructure(Observation()));
         // if (0)
         if (!halt_data && step_num < 7400) { // Stop at roughly 177 seconds or first unit death
@@ -170,7 +190,7 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
             float upg_min = score.score_details.used_minerals.upgrade;
             float upg_vesp = score.score_details.used_vespene.upgrade;
             float struct_val = score.score_details.total_value_structures;
-            sc2::Units units = Observation()->GetUnits();
+            sc2::Units units = Observation()->GetUnits(Enemy, seen);
             sc2::Units army = GetArmyUnits(units);
             sc2::Units bases = GetBases(units);
             float army_val = GetArmyValue(obs, army);
