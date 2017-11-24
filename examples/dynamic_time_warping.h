@@ -7,6 +7,7 @@ Gather data necessary for multidemensional dynamic time warping (DTW).
 
 #include "sc2api/sc2_api.h"
 #include "sc2api/sc2_score.h"
+#include "sc2api/sc2_interfaces.h"
 #include "convex_hull_slow.h"
 #include "unit_centroid.h"
 #include "parse_csv.h"
@@ -28,20 +29,20 @@ static int replay_count = 0;
 //functions to determine what visability a unit has
 bool in_Vision(const sc2::Unit &unit)
 {
-    if(unit.display_type == Visable)
+    if(unit.display_type == sc2::Unit::Visible)
         return true;
     return false;
 }
 
 bool in_Fog(const sc2::Unit &unit)
 {
-    if(unit.display_type == Snapshot)
+    if(unit.display_type == sc2::Unit::Snapshot)
         return true;
     return false;
 }
 bool discovered(const sc2::Unit &unit)
 {
-    if(unit.display_type == Hidden)
+    if(unit.display_type == sc2::Unit::Hidden)
         return false;
     return true;
 }
@@ -61,7 +62,7 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
     bool halt_data = false;
     int probes = 0, adepts = 0; // initial scout
     bool file_write_flag = false;
-
+    int minerals=0, gas=0;
 
     DynamicTimeWarping() :
         sc2::ReplayObserver() {
@@ -178,23 +179,35 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
 
 
     void OnStep() {
-        
-        Filter seen = discovered;
         // sc2::Units structures = Observation()->GetUnits(sc2::Unit::Self, IsStructure(Observation()));
         // if (0)
         if (!halt_data && step_num < 7400) { // Stop at roughly 177 seconds or first unit death
+            sc2::Units units = Observation()->GetUnits(sc2::Unit::Enemy, discovered);
+            sc2::Units army = GetArmyUnits(units);
+            sc2::Units bases = GetBases(units);
+            //ensure that at least one base is  assumed
+            if(bases.size() < 1)
+                bases.resize(1);
+
             const sc2::ObservationInterface* obs = Observation();
             const sc2::Score& score = obs->GetScore();
             // sc2::Score score;
-            float min_rate = score.score_details.collection_rate_minerals;
-            float gas_rate = score.score_details.collection_rate_vespene;
-            float upg_min = score.score_details.used_minerals.upgrade;
-            float upg_vesp = score.score_details.used_vespene.upgrade;
+            //each fully mined mineral patch generates 100 mins approx so each base is 800 if we can see it also update overall mins
+            float min_rate = bases.size()*800;
+            minerals += min_rate/60;
+            //each gas generates about 170 gas per second *todo* add a filter for gases
+            float gas_rate = bases.size()*2*170;
+            gas += gas_rate/60;
+  
+            //I havent found a good method of checking and traking upgrades yet
+            float upg_min = 0;
+            float upg_vesp = 0;
+
+            //the struct and army val should be assumed to be a combo of the total money, assuming unspent cash should break the classifier
             float struct_val = score.score_details.total_value_structures;
-            sc2::Units units = Observation()->GetUnits(Enemy, seen);
-            sc2::Units army = GetArmyUnits(units);
-            sc2::Units bases = GetBases(units);
             float army_val = GetArmyValue(obs, army);
+
+
             float struct_area = convhull::Area(convhull::ConvexHull(GetStructures(obs, units)));
             float army_dist = army_val == 0 ? 0.0f : GetDistance(GetUnitCentroid(units), GetUnitCentroid(army));
 
