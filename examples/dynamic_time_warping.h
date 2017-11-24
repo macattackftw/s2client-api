@@ -87,7 +87,6 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
             // Deal with the first column
             all_in_[0][i] = std::stof(lines[i]);
         }
-
         lines.clear();
         lines = GetLines("/home/kyle/IntergalacticLifelineI/s2client-api/baselines/cheese_baseline.csv");
         std::cout << "Cheeselines: " << lines.size() << std::endl;
