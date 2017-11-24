@@ -104,6 +104,7 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
             cheese_[0][i] = std::stof(lines[i]);
         }
 
+
         lines.clear();
         lines = GetLines("/home/kyle/IntergalacticLifelineI/s2client-api/baselines/economic_baseline.csv");
         std::cout << "economiclines: " << lines.size() << std::endl;
