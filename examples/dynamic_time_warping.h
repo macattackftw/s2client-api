@@ -46,6 +46,57 @@ bool discovered(const sc2::Unit &unit)
         return false;
     return true;
 }
+bool buildings(const sc2::Unit &unit)
+{   
+    if(unit.display_type == sc2::Unit::Hidden)
+        return false;
+    sc2::IsUnit building = sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR;
+    if(building(unit))
+        return true;
+    building = sc2::UNIT_TYPEID::PROTOSS_CYBERNETICSCORE;
+    if(building(unit))
+        return true;
+    building = sc2::UNIT_TYPEID::PROTOSS_DARKSHRINE;
+    if(building(unit))
+        return true;
+    building = sc2::UNIT_TYPEID::PROTOSS_FLEETBEACON;
+    if(building(unit))
+        return true;
+    building = sc2::UNIT_TYPEID::PROTOSS_FORGE;
+    if(building(unit))
+        return true;
+    building = sc2::UNIT_TYPEID::PROTOSS_GATEWAY;
+    if(building(unit))
+        return true;
+    building = sc2::UNIT_TYPEID::PROTOSS_NEXUS;
+    if(building(unit))
+        return true;
+    building = sc2::UNIT_TYPEID::PROTOSS_PHOTONCANNON;
+    if(building(unit))
+        return true;
+    building= sc2::UNIT_TYPEID::PROTOSS_PYLON;
+    if(building(unit))
+        return true;
+    building = sc2::UNIT_TYPEID::PROTOSS_ROBOTICSBAY;
+    if(building(unit))
+        return true;
+    building = sc2::UNIT_TYPEID::PROTOSS_ROBOTICSFACILITY;
+    if(building(unit))
+        return true;
+    building = sc2::UNIT_TYPEID::PROTOSS_STARGATE;
+    if(building(unit))
+        return true;
+    building = sc2::UNIT_TYPEID::PROTOSS_TEMPLARARCHIVE;
+    if(building(unit))
+        return true;
+    building = sc2::UNIT_TYPEID::PROTOSS_TWILIGHTCOUNCIL;
+    if(building(unit))
+        return true;
+    building = sc2::UNIT_TYPEID::PROTOSS_WARPGATE;
+    if(building(unit))
+        return true;
+    return false;
+}
 
 class DynamicTimeWarping : public sc2::ReplayObserver {
   public:
@@ -203,9 +254,10 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
             float upg_min = 0;
             float upg_vesp = 0;
 
-            //the struct and army val should be assumed to be a combo of the total money, assuming unspent cash should break the classifier
-            float struct_val = score.score_details.total_value_structures;
-            float army_val = GetArmyValue(obs, army);
+            //the struct and army val should be assumed to be a combo of the total money, this is the simplist way i could think of the get the classifier to assume that units are existant.
+            sc2::Units struct_list = Observation()->GetUnits(sc2::Unit::Enemy, buildings);
+            float struct_val = GetArmyValue(obs, struct_list);
+            float army_val = minerals + gas - struct_val;
 
 
             float struct_area = convhull::Area(convhull::ConvexHull(GetStructures(obs, units)));
