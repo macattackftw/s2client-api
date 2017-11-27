@@ -1,7 +1,8 @@
 #include "sc2api/sc2_api.h"
 
 #include "sc2utils/sc2_manage_process.h"
-#include "time_unit_created.h"
+#include "dynamic_time_warping.h"
+// #include "time_unit_created.h"
 #include "sc2api/config.h"
 
 #include <iostream>
@@ -17,7 +18,8 @@ int main(int argc, char* argv[]) {
     }
 
 
-    TimeUnitCreated replay_observer;
+    DynamicTimeWarping replay_observer;
+    // TimeUnitCreated replay_observer;
 
     if (!coordinator.SetReplayPath(bot_config.replay_path.c_str())) {
         std::cout << "Unable to find replays." << std::endl;
@@ -28,5 +30,5 @@ int main(int argc, char* argv[]) {
     coordinator.AddReplayObserver(&replay_observer);
 
     while (coordinator.Update());
-    while (!sc2::PollKeyPress());
+    // while (!sc2::PollKeyPress());
 }
