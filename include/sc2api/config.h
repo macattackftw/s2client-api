@@ -97,7 +97,7 @@ struct ConfigReplayFilter
                 if(line_s.front() != '-')
                 {
                     if(count < 27)
-                        line_s.erase(0, line_s.find('#')+1);
+                        line_s.erase(0, line_s.find(':')+1);
                     switch(count)
                     {   
 
