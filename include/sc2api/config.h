@@ -10,7 +10,6 @@ using namespace std;
 
 const string replay_config_file = "../../config.txt";
 //namespace sc2{
-//***TODO***remove the structs and enums and use the sc2 namespace instead
 enum Race {
     Terran,
     Zerg,
@@ -23,7 +22,7 @@ enum GameResult {
     Tie,
     Undecided
 };
-struct ReplayPlayerInfo {
+struct configReplayPlayerInfo {
     //! Player ID.
     int player_id;
     //! Player ranking.
@@ -37,7 +36,7 @@ struct ReplayPlayerInfo {
     //! If the player won or lost.
     GameResult game_result;
 
-    ReplayPlayerInfo() :
+    configReplayPlayerInfo() :
         player_id(0),
         mmr(-10000),
         apm(0),
@@ -45,7 +44,7 @@ struct ReplayPlayerInfo {
         race_selected(Random) {
     }
 };
-struct ReplayInfo {
+struct configReplayInfo {
     float duration;
     unsigned int duration_gameloops;
     int32_t num_players;
@@ -56,7 +55,7 @@ struct ReplayInfo {
     string replay_path;
     string version;
     string data_version;
-    ReplayPlayerInfo players[2];
+    configReplayPlayerInfo players[2];
 };
 
 struct ConfigReplayFilter
@@ -75,7 +74,7 @@ struct ConfigReplayFilter
     class Config
     {
         public:
-        ReplayInfo rp_filter;
+        configReplayInfo rp_filter;
         string exe_path;
         string replay_path;
         ConfigReplayFilter filter;
@@ -97,7 +96,7 @@ struct ConfigReplayFilter
 
                 if(line_s.front() != '-')
                 {
-                    line_s.erase(0, line_s.find(':')+1);
+                    line_s.erase(0, line_s.find('#')+1);
                     switch(count)
                     {   
 
