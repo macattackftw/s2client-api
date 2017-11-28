@@ -22,7 +22,7 @@ enum GameResult {
     Tie,
     Undecided
 };
-struct configReplayPlayerInfo {
+struct ReplayPlayerInfo {
     //! Player ID.
     int player_id;
     //! Player ranking.
@@ -36,7 +36,7 @@ struct configReplayPlayerInfo {
     //! If the player won or lost.
     GameResult game_result;
 
-    configReplayPlayerInfo() :
+    ReplayPlayerInfo() :
         player_id(0),
         mmr(-10000),
         apm(0),
@@ -44,7 +44,7 @@ struct configReplayPlayerInfo {
         race_selected(Random) {
     }
 };
-struct configReplayInfo {
+struct ReplayInfo {
     float duration;
     unsigned int duration_gameloops;
     int32_t num_players;
@@ -55,7 +55,7 @@ struct configReplayInfo {
     string replay_path;
     string version;
     string data_version;
-    configReplayPlayerInfo players[2];
+    ReplayPlayerInfo players[2];
 };
 
 struct ConfigReplayFilter
@@ -74,7 +74,7 @@ struct ConfigReplayFilter
     class Config
     {
         public:
-        configReplayInfo rp_filter;
+        ReplayInfo rp_filter;
         string exe_path;
         string replay_path;
         ConfigReplayFilter filter;
@@ -96,7 +96,8 @@ struct ConfigReplayFilter
 
                 if(line_s.front() != '-')
                 {
-                    line_s.erase(0, line_s.find('#')+1);
+                    if(count < 27)
+                        line_s.erase(0, line_s.find('#')+1);
                     switch(count)
                     {   
 
