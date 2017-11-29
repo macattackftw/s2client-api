@@ -7,7 +7,6 @@ Gather data necessary for multidemensional dynamic time warping (DTW).
 
 #include "sc2api/sc2_api.h"
 #include "sc2api/sc2_score.h"
-#include "sc2api/sc2_interfaces.h"
 #include "convex_hull_slow.h"
 #include "unit_centroid.h"
 #include "parse_csv.h"
@@ -26,77 +25,6 @@ const int STEP_SIZE = 22;
 const int PLAYER_ID = 1;
 static int replay_count = 0;
 
-//functions to determine what visability a unit has
-bool in_Vision(const sc2::Unit &unit)
-{
-    if(unit.display_type == sc2::Unit::Visible)
-        return true;
-    return false;
-}
-
-bool in_Fog(const sc2::Unit &unit)
-{
-    if(unit.display_type == sc2::Unit::Snapshot)
-        return true;
-    return false;
-}
-bool discovered(const sc2::Unit &unit)
-{
-    if(unit.display_type == sc2::Unit::Hidden)
-        return false;
-    return true;
-}
-bool buildings(const sc2::Unit &unit)
-{   
-    if(unit.display_type == sc2::Unit::Hidden)
-        return false;
-    sc2::IsUnit building = sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR;
-    if(building(unit))
-        return true;
-    building = sc2::UNIT_TYPEID::PROTOSS_CYBERNETICSCORE;
-    if(building(unit))
-        return true;
-    building = sc2::UNIT_TYPEID::PROTOSS_DARKSHRINE;
-    if(building(unit))
-        return true;
-    building = sc2::UNIT_TYPEID::PROTOSS_FLEETBEACON;
-    if(building(unit))
-        return true;
-    building = sc2::UNIT_TYPEID::PROTOSS_FORGE;
-    if(building(unit))
-        return true;
-    building = sc2::UNIT_TYPEID::PROTOSS_GATEWAY;
-    if(building(unit))
-        return true;
-    building = sc2::UNIT_TYPEID::PROTOSS_NEXUS;
-    if(building(unit))
-        return true;
-    building = sc2::UNIT_TYPEID::PROTOSS_PHOTONCANNON;
-    if(building(unit))
-        return true;
-    building= sc2::UNIT_TYPEID::PROTOSS_PYLON;
-    if(building(unit))
-        return true;
-    building = sc2::UNIT_TYPEID::PROTOSS_ROBOTICSBAY;
-    if(building(unit))
-        return true;
-    building = sc2::UNIT_TYPEID::PROTOSS_ROBOTICSFACILITY;
-    if(building(unit))
-        return true;
-    building = sc2::UNIT_TYPEID::PROTOSS_STARGATE;
-    if(building(unit))
-        return true;
-    building = sc2::UNIT_TYPEID::PROTOSS_TEMPLARARCHIVE;
-    if(building(unit))
-        return true;
-    building = sc2::UNIT_TYPEID::PROTOSS_TWILIGHTCOUNCIL;
-    if(building(unit))
-        return true;
-    building = sc2::UNIT_TYPEID::PROTOSS_WARPGATE;
-    if(building(unit))
-        return true;
-    return false;
-}
 
 class DynamicTimeWarping : public sc2::ReplayObserver {
   public:
@@ -113,11 +41,11 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
     bool halt_data = false;
     int probes = 0, adepts = 0; // initial scout
     bool file_write_flag = false;
-    int minerals=0, gas=0;
+
 
     DynamicTimeWarping() :
         sc2::ReplayObserver() {
-        std::vector<std::string> lines = GetLines("/home/kyle/IntergalacticLifelineI/s2client-api/baselines/all_in_baseline.csv");
+        std::vector<std::string> lines = GetLines("/home/kmac/fixing/IntergalacticLifelineI/s2client-api/baselines/all_in_baseline.csv");
         for (unsigned int i = 0; i < cols; ++i) {
             all_in_.emplace_back(std::vector<float>(lines.size(), 0.0f));
             cheese_.emplace_back(std::vector<float>(lines.size(), 0.0f));
@@ -138,8 +66,9 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
             // Deal with the first column
             all_in_[0][i] = std::stof(lines[i]);
         }
+
         lines.clear();
-        lines = GetLines("/home/kyle/IntergalacticLifelineI/s2client-api/baselines/cheese_baseline.csv");
+        lines = GetLines("/home/kmac/fixing/IntergalacticLifelineI/s2client-api/baselines/cheese_baseline.csv");
         std::cout << "Cheeselines: " << lines.size() << std::endl;
         for (unsigned int i = 0; i < lines.size(); ++i) {
             // From the end of the line walk backwards looking for commas
@@ -155,9 +84,8 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
             cheese_[0][i] = std::stof(lines[i]);
         }
 
-
         lines.clear();
-        lines = GetLines("/home/kyle/IntergalacticLifelineI/s2client-api/baselines/economic_baseline.csv");
+        lines = GetLines("/home/kmac/fixing/IntergalacticLifelineI/s2client-api/baselines/economic_baseline.csv");
         std::cout << "economiclines: " << lines.size() << std::endl;
         for (unsigned int i = 0; i < lines.size(); ++i) {
             // From the end of the line walk backwards looking for commas
@@ -174,7 +102,7 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
         }
 
         lines.clear();
-        lines = GetLines("/home/kyle/IntergalacticLifelineI/s2client-api/baselines/timing_baseline.csv");
+        lines = GetLines("/home/kmac/fixing/IntergalacticLifelineI/s2client-api/baselines/timing_baseline.csv");
         for (unsigned int i = 0; i < lines.size(); ++i) {
             // From the end of the line walk backwards looking for commas
             // Split that bit off and add to the appropriate vector.
@@ -213,8 +141,7 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
         halt_data = false;
         if (file_write_flag) {
             fout_strings.clear();
-            // OpenFile("Seconds,ArmyVal,MinRate,GasRate,StructVal,UpgMin,UpgGas,StructPerim,ArmyDist\n");
-            OpenFile("");
+            OpenFile("Seconds,ArmyVal,MinRate,GasRate,StructVal,UpgMin,UpgGas,StructPerim,ArmyDist\n");
         }
     }
 
@@ -230,35 +157,22 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
 
 
     void OnStep() {
+
         // sc2::Units structures = Observation()->GetUnits(sc2::Unit::Self, IsStructure(Observation()));
         // if (0)
         if (!halt_data && step_num < 7400) { // Stop at roughly 177 seconds or first unit death
-            sc2::Units units = Observation()->GetUnits(sc2::Unit::Enemy, discovered);
-            sc2::Units army = GetArmyUnits(units);
-            sc2::Units bases = GetBases(units);
-            //ensure that at least one base is  assumed
-            if(bases.size() < 1)
-                bases.resize(1);
-
             const sc2::ObservationInterface* obs = Observation();
             const sc2::Score& score = obs->GetScore();
-            // sc2::Score score;
-            //each fully mined mineral patch generates 100 mins approx so each base is 800 if we can see it also update overall mins
-            float min_rate = bases.size()*800;
-            minerals += min_rate/60;
-            //each gas generates about 170 gas per second *todo* add a filter for gases
-            float gas_rate = bases.size()*2*170;
-            gas += gas_rate/60;
-  
-            //I havent found a good method of checking and traking upgrades yet
-            float upg_min = 0;
-            float upg_vesp = 0;
 
-            //the struct and army val should be assumed to be a combo of the total money, this is the simplist way i could think of the get the classifier to assume that units are existant.
-            sc2::Units struct_list = Observation()->GetUnits(sc2::Unit::Enemy, buildings);
-            float struct_val = GetArmyValue(obs, struct_list);
-            float army_val = minerals + gas - struct_val;
-
+            float min_rate = score.score_details.collection_rate_minerals;
+            float gas_rate = score.score_details.collection_rate_vespene;
+            float upg_min = score.score_details.used_minerals.upgrade;
+            float upg_vesp = score.score_details.used_vespene.upgrade;
+            float struct_val = score.score_details.total_value_structures;
+            sc2::Units units = Observation()->GetUnits();
+            sc2::Units army = GetArmyUnits(units);
+            sc2::Units bases = GetBases(units);
+            float army_val = GetArmyValue(obs, army);
 
             float struct_area = convhull::Area(convhull::ConvexHull(GetStructures(obs, units)));
             float army_dist = army_val == 0 ? 0.0f : GetDistance(GetUnitCentroid(units), GetUnitCentroid(army));

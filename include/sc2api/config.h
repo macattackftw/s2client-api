@@ -8,7 +8,7 @@
 
 using namespace std;
 
-const string replay_config_file = "../../config.txt";
+const string replay_config_file = "../../s2client-api/config.txt";
 //namespace sc2{
 enum Race {
     Terran,
