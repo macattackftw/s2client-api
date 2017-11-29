@@ -69,7 +69,6 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
 
         lines.clear();
         lines = GetLines("/home/kmac/fixing/IntergalacticLifelineI/s2client-api/baselines/cheese_baseline.csv");
-        std::cout << "Cheeselines: " << lines.size() << std::endl;
         for (unsigned int i = 0; i < lines.size(); ++i) {
             // From the end of the line walk backwards looking for commas
             // Split that bit off and add to the appropriate vector.
@@ -86,7 +85,6 @@ class DynamicTimeWarping : public sc2::ReplayObserver {
 
         lines.clear();
         lines = GetLines("/home/kmac/fixing/IntergalacticLifelineI/s2client-api/baselines/economic_baseline.csv");
-        std::cout << "economiclines: " << lines.size() << std::endl;
         for (unsigned int i = 0; i < lines.size(); ++i) {
             // From the end of the line walk backwards looking for commas
             // Split that bit off and add to the appropriate vector.
